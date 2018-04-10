@@ -1,0 +1,20 @@
+.rsslider__image {
+  width: 800px;
+  height: 600px;
+  border: 1px solid black; }
+
+.rsslider__prev {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  position: 50% 90%;
+  background-color: red;
+  content: "<"; }
+
+.rsslider__next {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  position: 50% 90%;
+  background-color: red;
+  content: ">"; }

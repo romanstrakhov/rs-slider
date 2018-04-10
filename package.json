@@ -1,0 +1,30 @@
+{
+  "name": "rs-slider",
+  "version": "1.0.0",
+  "description": "JS slider implementation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romanstrakhov/rs-slider.git"
+  },
+  "keywords": [
+    "js",
+    "slider",
+    "pure"
+  ],
+  "author": "Roman Strakhov <roman@strakhov.ru>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/romanstrakhov/rs-slider/issues"
+  },
+  "homepage": "https://github.com/romanstrakhov/rs-slider#readme",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-connect": "^5.5.0",
+    "gulp-sass": "^4.0.1",
+    "gulp-watch": "^5.0.0"
+  }
+}
