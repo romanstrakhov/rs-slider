@@ -31,7 +31,7 @@ function Slider ( sliderID, sliderImages ) { // class constructor
   placeholder.appendChild(this.arrowNext);
 
   // add images
-  sliderImages.forEach( function(e, i, a) {
+  sliderImages.forEach( function(e) {
     let imageItem = document.createElement('img');
     imageItem.setAttribute('src', e);
     imageItem.classList.add('rsslider__image');
@@ -43,36 +43,36 @@ function Slider ( sliderID, sliderImages ) { // class constructor
   Object.defineProperty( this, 'updateView', { 
     value: function () {
 
-    if (this.currentImage<1) {
-      this.currentImage = 1;
-    } else if (this.currentImage>this.numImages) {
-      this.currentImage = this.numImages;
-    }
-
-    this.arrowPrev.classList.remove('hidden');
-    this.arrowNext.classList.remove('hidden');
-
-    if (this.currentImage==1) {
-      this.arrowPrev.classList.add('hidden');
-    } 
-    if (this.currentImage==this.numImages) {
-      this.arrowNext.classList.add('hidden');
-    }
-    
-    this.listImages.forEach( function(e, i, a) {
-      if ( i + 1 !== this.currentImage ) {
-        e.classList.add('hidden');
-      } else {
-        e.classList.remove('hidden');
+      if (this.currentImage<1) {
+        this.currentImage = 1;
+      } else if (this.currentImage>this.numImages) {
+        this.currentImage = this.numImages;
       }
-    }, this);
 
-    return this;
+      this.arrowPrev.classList.remove('hidden');
+      this.arrowNext.classList.remove('hidden');
+
+      if (this.currentImage==1) {
+        this.arrowPrev.classList.add('hidden');
+      } 
+      if (this.currentImage==this.numImages) {
+        this.arrowNext.classList.add('hidden');
+      }
+      
+      this.listImages.forEach( function(e, i) {
+        if ( i + 1 !== this.currentImage ) {
+          e.classList.add('hidden');
+        } else {
+          e.classList.remove('hidden');
+        }
+      }, this);
+
+      return this;
 
     },
-  enumerable: true,
-  configurable: true,
-  writable: true
+    enumerable: true,
+    configurable: true,
+    writable: true
   });
 
   
@@ -83,13 +83,13 @@ function Slider ( sliderID, sliderImages ) { // class constructor
   var thisSlider = this;
   placeholder.addEventListener('click', function(e){
 
-  	if (e.target.classList.contains('rsslider__prev')) {
-  		thisSlider.goPrev();
-  	}
+    if (e.target.classList.contains('rsslider__prev')) {
+      thisSlider.goPrev();
+    }
 
-  	if (e.target.classList.contains('rsslider__next')) {
-  		thisSlider.goNext();
-  	}
+    if (e.target.classList.contains('rsslider__next')) {
+      thisSlider.goNext();
+    }
 
   });
 
@@ -98,14 +98,14 @@ function Slider ( sliderID, sliderImages ) { // class constructor
     
     value: function () {
 
-    this.currentImage++;
-    this.updateView();
-    return this;
+      this.currentImage++;
+      this.updateView();
+      return this;
 
     },
-  enumerable: true,
-  configurable: true,
-  writable: true
+    enumerable: true,
+    configurable: true,
+    writable: true
   });
 
 
@@ -122,7 +122,7 @@ function Slider ( sliderID, sliderImages ) { // class constructor
     writable: true
   });
 
-};
+}
 
 
 function debuglog(item) {
@@ -132,4 +132,4 @@ function debuglog(item) {
   } else {
     return 0;
   }
-};
+}
