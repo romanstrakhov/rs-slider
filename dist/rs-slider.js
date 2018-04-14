@@ -1,48 +1,71 @@
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var DEBUG = true;
 
-function Slider(sliderID, sliderImages) {
-  // class constructor
+var Slider = function () {
+  function Slider(sliderID, sliderImages) {
+    _classCallCheck(this, Slider);
 
-  this.id = sliderID;
-  this.images = sliderImages;
+    this.id = sliderID;
+    this.images = sliderImages;
 
-  this.numImages = sliderImages.length;
-  this.listImages = [];
-  this.currentImage = 1;
+    this.numImages = sliderImages.length;
+    this.listImages = [];
+    this.currentImage = 1;
 
-  if (this.numImages <= 0) {
-    return false;
+    if (this.numImages <= 0) {
+      return false;
+    }
+
+    var placeholder = document.getElementById(this.id);
+
+    if (!placeholder) {
+      return false;
+    }
+
+    //  add arrows
+
+    this.arrowPrev = document.createElement('div');
+    this.arrowPrev.classList.add('rsslider__prev');
+    placeholder.appendChild(this.arrowPrev);
+
+    this.arrowNext = document.createElement('div');
+    this.arrowNext.classList.add('rsslider__next');
+    placeholder.appendChild(this.arrowNext);
+
+    // add images
+    sliderImages.forEach(function (e) {
+      var imageItem = document.createElement('img');
+      imageItem.setAttribute('src', e);
+      imageItem.classList.add('rsslider__image');
+      placeholder.appendChild(imageItem);
+      this.listImages.push(imageItem);
+    }, this);
+
+    placeholder.classList.add('rsslider');
+
+    this.updateView();
+
+    var thisSlider = this;
+    placeholder.addEventListener('click', function (e) {
+
+      if (e.target.classList.contains('rsslider__prev')) {
+        thisSlider.goPrev();
+      }
+
+      if (e.target.classList.contains('rsslider__next')) {
+        thisSlider.goNext();
+      }
+    });
   }
 
-  var placeholder = document.getElementById(this.id);
-
-  if (!placeholder) {
-    return false;
-  }
-
-  //  add arrows
-
-  this.arrowPrev = document.createElement('div');
-  this.arrowPrev.classList.add('rsslider__prev');
-  placeholder.appendChild(this.arrowPrev);
-
-  this.arrowNext = document.createElement('div');
-  this.arrowNext.classList.add('rsslider__next');
-  placeholder.appendChild(this.arrowNext);
-
-  // add images
-  sliderImages.forEach(function (e) {
-    var imageItem = document.createElement('img');
-    imageItem.setAttribute('src', e);
-    imageItem.classList.add('rsslider__image');
-    placeholder.appendChild(imageItem);
-    this.listImages.push(imageItem);
-  }, this);
-
-  Object.defineProperty(this, 'updateView', {
-    value: function value() {
+  _createClass(Slider, [{
+    key: 'updateView',
+    value: function updateView() {
 
       if (this.currentImage < 1) {
         this.currentImage = 1;
@@ -67,55 +90,26 @@ function Slider(sliderID, sliderImages) {
           e.classList.remove('hidden');
         }
       }, this);
-
-      return this;
-    },
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
-
-  placeholder.classList.add('rsslider');
-
-  this.updateView();
-
-  var thisSlider = this;
-  placeholder.addEventListener('click', function (e) {
-
-    if (e.target.classList.contains('rsslider__prev')) {
-      thisSlider.goPrev();
     }
-
-    if (e.target.classList.contains('rsslider__next')) {
-      thisSlider.goNext();
-    }
-  });
-
-  Object.defineProperty(this, 'goNext', {
-
-    value: function value() {
+  }, {
+    key: 'goNext',
+    value: function goNext() {
 
       this.currentImage++;
       this.updateView();
-      return this;
-    },
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
-
-  Object.defineProperty(this, 'goPrev', {
-    value: function value() {
+      // return this;
+    }
+  }, {
+    key: 'goPres',
+    value: function goPres() {
 
       this.currentImage--;
       this.updateView();
-      return this;
-    },
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
-}
+    }
+  }]);
+
+  return Slider;
+}();
 
 function debuglog(item) {
   if (DEBUG) {

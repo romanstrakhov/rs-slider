@@ -1,126 +1,107 @@
 
 const DEBUG = true;
 
-function Slider ( sliderID, sliderImages ) { // class constructor
+class Slider {
 
-  this.id = sliderID;
-  this.images = sliderImages;
-
-  this.numImages = sliderImages.length;
-  this.listImages = [];
-  this.currentImage = 1;
-
-  if (this.numImages<=0) {
-    return false;
-  }
-
-  let placeholder = document.getElementById(this.id);
-
-  if (!placeholder) {
-    return false;
-  }
-
-  //  add arrows
-
-  this.arrowPrev = document.createElement('div');
-  this.arrowPrev.classList.add('rsslider__prev');
-  placeholder.appendChild(this.arrowPrev);
-
-  this.arrowNext = document.createElement('div');
-  this.arrowNext.classList.add('rsslider__next');
-  placeholder.appendChild(this.arrowNext);
-
-  // add images
-  sliderImages.forEach( function(e) {
-    let imageItem = document.createElement('img');
-    imageItem.setAttribute('src', e);
-    imageItem.classList.add('rsslider__image');
-    placeholder.appendChild(imageItem);
-    this.listImages.push(imageItem);
-  }, this);
-
-
-  Object.defineProperty( this, 'updateView', { 
-    value: function () {
-
-      if (this.currentImage<1) {
-        this.currentImage = 1;
-      } else if (this.currentImage>this.numImages) {
-        this.currentImage = this.numImages;
-      }
-
-      this.arrowPrev.classList.remove('hidden');
-      this.arrowNext.classList.remove('hidden');
-
-      if (this.currentImage==1) {
-        this.arrowPrev.classList.add('hidden');
-      } 
-      if (this.currentImage==this.numImages) {
-        this.arrowNext.classList.add('hidden');
-      }
-      
-      this.listImages.forEach( function(e, i) {
-        if ( i + 1 !== this.currentImage ) {
-          e.classList.add('hidden');
-        } else {
-          e.classList.remove('hidden');
-        }
-      }, this);
-
-      return this;
-
-    },
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
-
+  constructor( sliderID, sliderImages ) {
+    this.id = sliderID;
+    this.images = sliderImages;
   
-  placeholder.classList.add('rsslider');
-
-  this.updateView();
+    this.numImages = sliderImages.length;
+    this.listImages = [];
+    this.currentImage = 1;
   
-  var thisSlider = this;
-  placeholder.addEventListener('click', function(e){
-
-    if (e.target.classList.contains('rsslider__prev')) {
-      thisSlider.goPrev();
+    if (this.numImages<=0) {
+      return false;
     }
-
-    if (e.target.classList.contains('rsslider__next')) {
-      thisSlider.goNext();
+  
+    let placeholder = document.getElementById(this.id);
+  
+    if (!placeholder) {
+      return false;
     }
+  
+    //  add arrows
+  
+    this.arrowPrev = document.createElement('div');
+    this.arrowPrev.classList.add('rsslider__prev');
+    placeholder.appendChild(this.arrowPrev);
+  
+    this.arrowNext = document.createElement('div');
+    this.arrowNext.classList.add('rsslider__next');
+    placeholder.appendChild(this.arrowNext);
+  
+    // add images
+    sliderImages.forEach( function(e) {
+      let imageItem = document.createElement('img');
+      imageItem.setAttribute('src', e);
+      imageItem.classList.add('rsslider__image');
+      placeholder.appendChild(imageItem);
+      this.listImages.push(imageItem);
+    }, this);
+  
+    placeholder.classList.add('rsslider');
 
-  });
-
-
-  Object.defineProperty( this, 'goNext', { 
+    this.updateView();
     
-    value: function () {
+    var thisSlider = this;
+    placeholder.addEventListener('click', function(e){
 
-      this.currentImage++;
-      this.updateView();
-      return this;
+      if (e.target.classList.contains('rsslider__prev')) {
+        thisSlider.goPrev();
+      }
 
-    },
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
+      if (e.target.classList.contains('rsslider__next')) {
+        thisSlider.goNext();
+      }
 
+    });
+  
+  
+  }
 
-  Object.defineProperty( this, 'goPrev', { 
-    value: function () {
+  updateView() {
 
-      this.currentImage--;
-      this.updateView();
-      return this;
+    if (this.currentImage<1) {
+      this.currentImage = 1;
+    } else if (this.currentImage>this.numImages) {
+      this.currentImage = this.numImages;
+    }
 
-    },
-    enumerable: true,
-    configurable: true,
-    writable: true
-  });
+    this.arrowPrev.classList.remove('hidden');
+    this.arrowNext.classList.remove('hidden');
+
+    if (this.currentImage==1) {
+      this.arrowPrev.classList.add('hidden');
+    } 
+    if (this.currentImage==this.numImages) {
+      this.arrowNext.classList.add('hidden');
+    }
+    
+    this.listImages.forEach( function(e, i) {
+      if ( i + 1 !== this.currentImage ) {
+        e.classList.add('hidden');
+      } else {
+        e.classList.remove('hidden');
+      }
+    }, this);
+
+  }
+
+  goNext() {
+
+    this.currentImage++;
+    this.updateView();
+    // return this;
+
+  }
+
+  goPres() {
+
+    this.currentImage--;
+    this.updateView();
+
+  }
 
 }
 

@@ -8,9 +8,9 @@ var sass = require('gulp-sass');
 var babel = require('gulp-babel');
 
 gulp.task( 'watch', function() {
-  watch( 'styles/**/*.scss', ['styles'] );
-  watch( 'index.html', ['views'] );
-  watch( 'js/**/*.js', ['scripts'] );
+  gulp.watch( 'styles/**/*.scss', ['styles'] );
+  gulp.watch( 'index.html', ['views'] );
+  gulp.watch( 'js/**/*.js', ['scripts'] );
 } );
 
 gulp.task('connect', function () {
