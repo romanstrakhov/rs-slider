@@ -8,9 +8,9 @@ var sass = require('gulp-sass');
 var babel = require('gulp-babel');
 
 gulp.task( 'watch', function() {
-    gulp.watch( 'styles/**/*.scss', ['styles'] );
-    gulp.watch( 'index.html', ['views'] );
-    gulp.watch( 'js/**/*.js', ['scripts'] );
+  watch( 'styles/**/*.scss', ['styles'] );
+  watch( 'index.html', ['views'] );
+  watch( 'js/**/*.js', ['scripts'] );
 } );
 
 gulp.task('connect', function () {
@@ -39,7 +39,7 @@ gulp.task( 'scripts', function() {
   return gulp.src( 'js/**/*.js' ) 
     .pipe(babel({ 
       presets: ['env']
-      }))
+    }))
     .pipe( gulp.dest( DIST_PATH ) )
     .pipe( connect.reload() );
 } );

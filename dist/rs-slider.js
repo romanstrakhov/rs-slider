@@ -33,7 +33,7 @@ function Slider(sliderID, sliderImages) {
   placeholder.appendChild(this.arrowNext);
 
   // add images
-  sliderImages.forEach(function (e, i, a) {
+  sliderImages.forEach(function (e) {
     var imageItem = document.createElement('img');
     imageItem.setAttribute('src', e);
     imageItem.classList.add('rsslider__image');
@@ -60,7 +60,7 @@ function Slider(sliderID, sliderImages) {
         this.arrowNext.classList.add('hidden');
       }
 
-      this.listImages.forEach(function (e, i, a) {
+      this.listImages.forEach(function (e, i) {
         if (i + 1 !== this.currentImage) {
           e.classList.add('hidden');
         } else {
@@ -115,7 +115,7 @@ function Slider(sliderID, sliderImages) {
     configurable: true,
     writable: true
   });
-};
+}
 
 function debuglog(item) {
   if (DEBUG) {
@@ -124,4 +124,4 @@ function debuglog(item) {
   } else {
     return 0;
   }
-};
+}
