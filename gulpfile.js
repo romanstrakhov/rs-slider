@@ -5,6 +5,7 @@ var watch = require('gulp-watch');
 // var changed = require('gulp-changed');
 var connect = require('gulp-connect');
 var sass = require('gulp-sass');
+var eslint = require('gulp-eslint');
 var babel = require('gulp-babel');
 
 gulp.task( 'watch', function() {
@@ -37,7 +38,8 @@ gulp.task( 'styles', function() {
 
 gulp.task( 'scripts', function() {
   return gulp.src( 'js/**/*.js' ) 
-    .pipe(babel({ 
+    .pipe( eslint() )
+    .pipe( babel({ 
       presets: ['env']
     }))
     .pipe( gulp.dest( DIST_PATH ) )
