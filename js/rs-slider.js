@@ -3,105 +3,156 @@ const DEBUG = true;
 
 class Slider {
 
-  constructor( sliderID, sliderImages ) {
-    this.id = sliderID;
-    this.images = sliderImages;
-  
-    this.numImages = sliderImages.length;
-    this.listImages = [];
-    this.currentImage = 1;
-  
-    if (this.numImages<=0) {
-      return false;
-    }
-  
-    let placeholder = document.getElementById(this.id);
-  
-    if (!placeholder) {
-      return false;
-    }
-  
-    //  add arrows
-  
-    this.arrowPrev = document.createElement('div');
-    this.arrowPrev.classList.add('rsslider__prev');
-    placeholder.appendChild(this.arrowPrev);
-  
-    this.arrowNext = document.createElement('div');
-    this.arrowNext.classList.add('rsslider__next');
-    placeholder.appendChild(this.arrowNext);
-  
-    // add images
-    sliderImages.forEach( function(e) {
-      let imageItem = document.createElement('img');
-      imageItem.setAttribute('src', e);
-      imageItem.classList.add('rsslider__image');
-      placeholder.appendChild(imageItem);
-      this.listImages.push(imageItem);
+  constructor( id, items ) {
+    
+    this.id = id;
+    this.count = items.length; // number of items
+
+    this.items = []; // list of all slider items as DOM objects
+    this.position = 1; // 
+    
+    this.container = document.getElementById(this.id);
+
+    this.container.classList.add('rsslider');
+
+    this.prevButton = this.addElement('button', 'rsslider__prev');
+    this.nextButton = this.addElement('button', 'rsslider__next');
+
+    items.forEach( function(element) {
+      this.items.push(this.addElement('img', ['rsslider__item', 'hidden'], { src: element }));
     }, this);
   
-    placeholder.classList.add('rsslider');
+    this.showCurrent();
 
-    this.updateView();
+    if (this.position===1) {
+      this.hidePrevButton();
+    }
+    if (this.position===this.count) {
+      this.hideNextButton();
+    }
+
+    // Event listeners
     
-    var thisSlider = this;
-    placeholder.addEventListener('click', function(e){
+    let thisSlider = this;
+    this.container.addEventListener('click', function(event){
 
-      if (e.target.classList.contains('rsslider__prev')) {
-        thisSlider.goPrev();
+      if (event.target.classList.contains('rsslider__prev')) {
+        thisSlider.prev();
       }
 
-      if (e.target.classList.contains('rsslider__next')) {
-        thisSlider.goNext();
+      if (event.target.classList.contains('rsslider__next')) {
+        thisSlider.next();
       }
 
     });
-  
-  
+
   }
 
-  updateView() {
+  next() {
 
-    if (this.currentImage<1) {
-      this.currentImage = 1;
-    } else if (this.currentImage>this.numImages) {
-      this.currentImage = this.numImages;
+    if (this.position>=this.count) {
+      this.position = this.count;
+      return;
     }
 
-    this.arrowPrev.classList.remove('hidden');
-    this.arrowNext.classList.remove('hidden');
-
-    if (this.currentImage==1) {
-      this.arrowPrev.classList.add('hidden');
-    } 
-    if (this.currentImage==this.numImages) {
-      this.arrowNext.classList.add('hidden');
+    if (this.position===1) {
+      this.showPrevButton();
     }
     
-    this.listImages.forEach( function(e, i) {
-      if ( i + 1 !== this.currentImage ) {
-        e.classList.add('hidden');
-      } else {
-        e.classList.remove('hidden');
-      }
-    }, this);
+    this.hideCurrent();
+    this.position++;
+    this.showCurrent();
+
+    if (this.position===this.count) {
+      this.hideNextButton();
+    }
 
   }
 
-  goNext() {
+  prev() {
 
-    this.currentImage++;
-    this.updateView();
-    // return this;
+    if (this.position<=1) {
+      this.position = 1;
+      return;
+    }
+
+
+    if (this.position===this.count) {
+      this.showNextButton();
+    }
+    
+    this.hideCurrent();
+    this.position--;
+    this.showCurrent();
+
+    if (this.position===1) {
+      this.hidePrevButton();
+    }
+
 
   }
 
-  goPres() {
+  //
+  // arguments: element(tag), elementClass, elementAttributes(Object)
+  // returns: DOM element
+  //
+  addElement() {
 
-    this.currentImage--;
-    this.updateView();
+    if ( arguments.length < 2 ) {
+      return false;
+    }
+
+    let item = document.createElement(arguments[0]);
+    
+    if (arguments[1] instanceof Array) {
+      arguments[1].forEach( function(element){
+        item.classList.add(element);
+      });
+    } else {
+      item.classList.add(arguments[1]);
+    }
+
+    
+    if ( arguments.length > 2 ) {
+      
+      let attributes  = arguments[2];
+      Object.keys(attributes).forEach( function(key) {
+        item.setAttribute(key, attributes[key]);
+      });
+
+    }
+    
+    this.container.appendChild(item);
+    return item;
 
   }
+
+
+
+  hideNextButton() {
+    this.nextButton.classList.add('hidden');
+  }
+
+  hidePrevButton() {
+    this.prevButton.classList.add('hidden');
+  }
+
+  showNextButton() {
+    this.nextButton.classList.remove('hidden');
+  }
+
+  showPrevButton() {
+    this.prevButton.classList.remove('hidden');
+  }
+
+  hideCurrent() {
+    this.items[this.position-1].classList.add('hidden');
+  }
+
+  showCurrent() {
+    this.items[this.position-1].classList.remove('hidden');
+  }
+
 
 }
 

@@ -7,104 +7,156 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var DEBUG = true;
 
 var Slider = function () {
-  function Slider(sliderID, sliderImages) {
+  function Slider(id, items) {
     _classCallCheck(this, Slider);
 
-    this.id = sliderID;
-    this.images = sliderImages;
+    this.id = id;
+    this.count = items.length; // number of items
 
-    this.numImages = sliderImages.length;
-    this.listImages = [];
-    this.currentImage = 1;
+    this.items = []; // list of all slider items as DOM objects
+    this.position = 1; // 
 
-    if (this.numImages <= 0) {
-      return false;
-    }
+    this.container = document.getElementById(this.id);
 
-    var placeholder = document.getElementById(this.id);
+    this.container.classList.add('rsslider');
 
-    if (!placeholder) {
-      return false;
-    }
+    this.prevButton = this.addElement('button', 'rsslider__prev');
+    this.nextButton = this.addElement('button', 'rsslider__next');
 
-    //  add arrows
-
-    this.arrowPrev = document.createElement('div');
-    this.arrowPrev.classList.add('rsslider__prev');
-    placeholder.appendChild(this.arrowPrev);
-
-    this.arrowNext = document.createElement('div');
-    this.arrowNext.classList.add('rsslider__next');
-    placeholder.appendChild(this.arrowNext);
-
-    // add images
-    sliderImages.forEach(function (e) {
-      var imageItem = document.createElement('img');
-      imageItem.setAttribute('src', e);
-      imageItem.classList.add('rsslider__image');
-      placeholder.appendChild(imageItem);
-      this.listImages.push(imageItem);
+    items.forEach(function (element) {
+      this.items.push(this.addElement('img', ['rsslider__item', 'hidden'], { src: element }));
     }, this);
 
-    placeholder.classList.add('rsslider');
+    this.showCurrent();
 
-    this.updateView();
+    if (this.position === 1) {
+      this.hidePrevButton();
+    }
+    if (this.position === this.count) {
+      this.hideNextButton();
+    }
+
+    // Event listeners
 
     var thisSlider = this;
-    placeholder.addEventListener('click', function (e) {
+    this.container.addEventListener('click', function (event) {
 
-      if (e.target.classList.contains('rsslider__prev')) {
-        thisSlider.goPrev();
+      if (event.target.classList.contains('rsslider__prev')) {
+        thisSlider.prev();
       }
 
-      if (e.target.classList.contains('rsslider__next')) {
-        thisSlider.goNext();
+      if (event.target.classList.contains('rsslider__next')) {
+        thisSlider.next();
       }
     });
   }
 
   _createClass(Slider, [{
-    key: 'updateView',
-    value: function updateView() {
+    key: 'next',
+    value: function next() {
 
-      if (this.currentImage < 1) {
-        this.currentImage = 1;
-      } else if (this.currentImage > this.numImages) {
-        this.currentImage = this.numImages;
+      if (this.position >= this.count) {
+        this.position = this.count;
+        return;
       }
 
-      this.arrowPrev.classList.remove('hidden');
-      this.arrowNext.classList.remove('hidden');
-
-      if (this.currentImage == 1) {
-        this.arrowPrev.classList.add('hidden');
-      }
-      if (this.currentImage == this.numImages) {
-        this.arrowNext.classList.add('hidden');
+      if (this.position === 1) {
+        this.showPrevButton();
       }
 
-      this.listImages.forEach(function (e, i) {
-        if (i + 1 !== this.currentImage) {
-          e.classList.add('hidden');
-        } else {
-          e.classList.remove('hidden');
-        }
-      }, this);
+      this.hideCurrent();
+      this.position++;
+      this.showCurrent();
+
+      if (this.position === this.count) {
+        this.hideNextButton();
+      }
     }
   }, {
-    key: 'goNext',
-    value: function goNext() {
+    key: 'prev',
+    value: function prev() {
 
-      this.currentImage++;
-      this.updateView();
-      // return this;
+      if (this.position <= 1) {
+        this.position = 1;
+        return;
+      }
+
+      if (this.position === this.count) {
+        this.showNextButton();
+      }
+
+      this.hideCurrent();
+      this.position--;
+      this.showCurrent();
+
+      if (this.position === 1) {
+        this.hidePrevButton();
+      }
+    }
+
+    //
+    // arguments: element(tag), elementClass, elementAttributes(Object)
+    // returns: DOM element
+    //
+
+  }, {
+    key: 'addElement',
+    value: function addElement() {
+
+      if (arguments.length < 2) {
+        return false;
+      }
+
+      var item = document.createElement(arguments[0]);
+
+      if (arguments[1] instanceof Array) {
+        arguments[1].forEach(function (element) {
+          item.classList.add(element);
+        });
+      } else {
+        item.classList.add(arguments[1]);
+      }
+
+      if (arguments.length > 2) {
+
+        var attributes = arguments[2];
+        Object.keys(attributes).forEach(function (key) {
+          item.setAttribute(key, attributes[key]);
+        });
+      }
+
+      this.container.appendChild(item);
+      return item;
     }
   }, {
-    key: 'goPres',
-    value: function goPres() {
-
-      this.currentImage--;
-      this.updateView();
+    key: 'hideNextButton',
+    value: function hideNextButton() {
+      this.nextButton.classList.add('hidden');
+    }
+  }, {
+    key: 'hidePrevButton',
+    value: function hidePrevButton() {
+      this.prevButton.classList.add('hidden');
+    }
+  }, {
+    key: 'showNextButton',
+    value: function showNextButton() {
+      this.nextButton.classList.remove('hidden');
+    }
+  }, {
+    key: 'showPrevButton',
+    value: function showPrevButton() {
+      this.prevButton.classList.remove('hidden');
+    }
+  }, {
+    key: 'hideCurrent',
+    value: function hideCurrent() {
+      this.items[this.position - 1].classList.add('hidden');
+    }
+  }, {
+    key: 'showCurrent',
+    value: function showCurrent() {
+      this.items[this.position - 1].classList.remove('hidden');
     }
   }]);
 
