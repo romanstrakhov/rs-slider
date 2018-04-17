@@ -9,7 +9,6 @@ var Slider = function () {
     _classCallCheck(this, Slider);
 
     this.id = id;
-    this.count = items.length; // number of items
 
     this.items = []; // list of all slider items as DOM objects
     this.position = 1;
@@ -21,6 +20,14 @@ var Slider = function () {
     this.prevButton = this.addElement('button', 'rsslider__prev');
     this.nextButton = this.addElement('button', 'rsslider__next');
 
+    // Add images from HTML markup
+    var embedded = this.container.querySelectorAll('img.rsslider__item');
+    embedded.forEach(function (element) {
+      element.classList.add('hidden');
+      this.items.push(element);
+    }, this);
+
+    // Add addition images via Javascript
     items.forEach(function (element) {
       this.items.push(this.addElement('img', ['rsslider__item', 'hidden'], { src: element }));
     }, this);
@@ -30,7 +37,7 @@ var Slider = function () {
     if (this.position === 1) {
       this.hidePrevButton();
     }
-    if (this.position === this.count) {
+    if (this.position === this.items.length) {
       this.hideNextButton();
     }
 
@@ -53,8 +60,8 @@ var Slider = function () {
     key: 'next',
     value: function next() {
 
-      if (this.position >= this.count) {
-        this.position = this.count;
+      if (this.position >= this.items.length) {
+        this.position = this.items.length;
         return;
       }
 
@@ -66,7 +73,7 @@ var Slider = function () {
       this.position++;
       this.showCurrent();
 
-      if (this.position === this.count) {
+      if (this.position === this.items.length) {
         this.hideNextButton();
       }
     }
@@ -79,7 +86,7 @@ var Slider = function () {
         return;
       }
 
-      if (this.position === this.count) {
+      if (this.position === this.items.length) {
         this.showNextButton();
       }
 
