@@ -112,7 +112,6 @@ class Slider {
     } else {
       item.classList.add(arguments[1]);
     }
-
     
     if ( arguments.length > 2 ) {
       
@@ -125,7 +124,6 @@ class Slider {
     
     this.container.appendChild(item);
     return item;
-
   }
 
   hideNextButton() {
