@@ -4,15 +4,25 @@
   border: 1px solid black;
   position: relative;
   overflow: hidden; }
-  .rsslider__item {
+  .rsslider__wrapper {
     width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    margin-left: -50%;
+    height: 100%; }
+  .rsslider__item {
     z-index: 10;
     transition: opacity linear .3s; }
+    .rsslider__item .scrollable {
+      overflow: scroll; }
+    .rsslider__item > div {
+      padding: 1em 3em;
+      background-color: #eee;
+      min-height: 100%; }
+    .rsslider__item > img {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      margin-left: -50%; }
     .rsslider__item.hidden {
       opacity: 0; }
   .rsslider__prev, .rsslider__next {
@@ -37,3 +47,25 @@
   .rsslider__next {
     right: 0;
     background-image: url("i/next.png"); }
+  .rsslider__paginator {
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    width: 100%; }
+    .rsslider__paginator__button {
+      width: 8px;
+      height: 8px;
+      border-radius: 4px;
+      margin: 1px;
+      padding: 0;
+      border: 0;
+      background-color: #ccc;
+      box-shadow: 1px 1px 5px black;
+      opacity: 0.5;
+      cursor: hand; }
+      .rsslider__paginator__button:hover {
+        background-color: #fff;
+        opacity: 1; }
+      .rsslider__paginator__button.active {
+        background-color: #fff;
+        cursor: pointer; }

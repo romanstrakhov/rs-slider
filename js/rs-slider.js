@@ -1,136 +1,150 @@
+// import addDOMElement from './helpers.js';
+
 class Slider {
 
-  constructor( id, items ) {
+  constructor( id, config = {} ) {
     
     this.id = id;
-
-    this.items = []; // list of all slider items as DOM objects
-    this.position = 1;
     
-    this.container = document.getElementById(this.id);
+    this.slides = []; // list of all slider slides as DOM objects
+    this.position = 1;
 
-    this.container.classList.add('rsslider');
-
-    this.prevButton = this.addElement('button', 'rsslider__prev');
-    this.nextButton = this.addElement('button', 'rsslider__next');
+    this.wrapper = document.getElementById(this.id);
+    this.wrapper.classList.add('rsslider');
 
     // Add images from HTML markup
-    let embedded = this.container.querySelectorAll('img.rsslider__item');
-    embedded.forEach( function(element) {
+    this.wrapper.querySelectorAll('.rsslider__item').forEach( function(element) {
       element.classList.add('hidden');
-      this.items.push(element);
+      this.slides.push(element);
     }, this);
 
-    // Add addition images via Javascript
-    items.forEach( function(element) {
-      this.items.push(this.addElement('img', ['rsslider__item', 'hidden'], { src: element }));
-    }, this);
-  
+    this.addButtons();
     this.showCurrent();
 
-    if (this.position===1) {
-      this.hidePrevButton();
-    }
-    if (this.position===this.items.length) {
-      this.hideNextButton();
-    }
+  }
+
+
+  // Methods
+   
+  // Adds 'prev' and 'next' buttons
+  addButtons() {
+
+    this.prevButton = addDOMElement(this.wrapper, 'button', ['rsslider__prev']);
+    this.nextButton = addDOMElement(this.wrapper, 'button', ['rsslider__next']);
+    this.updateArrows();
 
     // Event listeners
     
     let thisSlider = this;
-    this.container.addEventListener('click', function(event){
+    this.wrapper.addEventListener('click', function(event){
 
       if (event.target.classList.contains('rsslider__prev')) {
-        thisSlider.prev();
+        thisSlider.shift(-1);
       }
 
       if (event.target.classList.contains('rsslider__next')) {
-        thisSlider.next();
+        thisSlider.shift(1);
       }
 
     });
 
   }
 
-  next() {
+  checkPosition() {
 
-    if (this.position>=this.items.length) {
-      this.position = this.items.length;
+    if (this.position>=this.slides.length) {
+      this.position = this.slides.length;
+      this.showButton('next', false);
       return;
+    } else {
+      this.showButton('next', true);
     }
-
-    if (this.position===1) {
-      this.showPrevButton();
-    }
-    
-    this.hideCurrent();
-    this.position++;
-    this.showCurrent();
-
-    if (this.position===this.items.length) {
-      this.hideNextButton();
-    }
-
-  }
-
-  prev() {
 
     if (this.position<=1) {
       this.position = 1;
+      this.showButton('prev', false);
       return;
-    }
-
-    if (this.position===this.items.length) {
-      this.showNextButton();
-    }
-    
-    this.hideCurrent();
-    this.position--;
-    this.showCurrent();
-
-    if (this.position===1) {
-      this.hidePrevButton();
+    } else {
+      this.showButton('prev', true);
     }
 
   }
-
-  // Internal functions
-   
   /**
-   * Adds an element to slider
-   * @param   {String} element tag
-   * @param   {String} or {Array} elementClass or array of classes
-   * @param   {Object} elementAttributes 
+   * @param  {int} delta Jumps by [delta] slides
+   */
+  shift(delta) { 
+
+    this.checkPosition();
+    this.hideCurrent();
+    
+    this.position+=delta;
+
+    this.checkPosition();
+    this.showCurrent();
+
+  }
+
+  jump(position) {
+
+    this.updateArrows();
+
+  }
+
+  /**
+   * Update 'prev'/'next' arrows on sides
+   * @param  {int} toPosition 
+   * @param  {int} fromPosition optional
+   */
+  updateArrows(toPosition=this.position, fromPosition=this.position) {
+
+    switch (fromPosition) {
+    case 1:
+      this.showButton('prev', true);
+      break;
+    case this.slides.length:
+      this.showButton('next', true);
+      break;
+    }
+    
+    switch (toPosition) {
+    case 1:
+      this.showButton('prev', false);
+      break;
+    case this.slides.length:
+      this.showButton('next', false);
+      break;
+    }
+    
+  }
+
+  /**
+   * Shows or hides control buttons
+   * @param   {String} button 
+   * @param   {String} tag Tag for element
+   * @param   {Array} classList List of classes
+   * @param   {Object} attList List of attributes
    *
    * @returns {Node} DOM object
    */
-  addElement() {
+  showButton(button, show) {
 
-    if ( arguments.length < 2 ) {
-      return false;
+    if (button=='prev') {
+      if (show) {
+        this.prevButton.classList.remove('hidden');
+      } else {
+        this.prevButton.classList.add('hidden');
+      }
     }
 
-    let item = document.createElement(arguments[0]);
-    
-    if (arguments[1] instanceof Array) {
-      arguments[1].forEach( function(element){
-        item.classList.add(element);
-      });
-    } else {
-      item.classList.add(arguments[1]);
+    if (button=='next') {
+      if (show) {
+        this.nextButton.classList.remove('hidden');
+      } else {
+        this.nextButton.classList.add('hidden');
+      }
     }
-    
-    if ( arguments.length > 2 ) {
-      
-      let attributes  = arguments[2];
-      Object.keys(attributes).forEach( function(key) {
-        item.setAttribute(key, attributes[key]);
-      });
 
-    }
-    
-    this.container.appendChild(item);
-    return item;
+
   }
 
   hideNextButton() {
@@ -150,11 +164,41 @@ class Slider {
   }
 
   hideCurrent() {
-    this.items[this.position-1].classList.add('hidden');
+    this.slides[this.position-1].classList.add('hidden');
   }
 
   showCurrent() {
-    this.items[this.position-1].classList.remove('hidden');
+    this.slides[this.position-1].classList.remove('hidden');
   }
+
+}
+
+
+/**
+ * Adds an element to DOM
+ * @param   {Node} wrapper 
+ * @param   {String} tag Tag for element
+ * @param   {Array} classList List of classes
+ * @param   {Object} attList List of attributes
+ *
+ * @returns {Node} DOM object
+ */
+function addDOMElement( wrapper, tag='div', classList=[], attList={} ) {
+    
+  let DOMElement = document.createElement(tag);
+
+  // TODO: Проверить classList и attList на типы!
+
+  if (classList.length > 0) {
+    classList.forEach( item => DOMElement.classList.add(item));
+  }
+
+  if (attList.length > 0) {
+    Object.keys(attList).forEach( key  => DOMElement.setAttribute(key, attList[key]) );
+  }
+
+  wrapper.appendChild(DOMElement);
+  
+  return DOMElement;
 
 }

@@ -4,140 +4,163 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// import addDOMElement from './helpers.js';
+
 var Slider = function () {
-  function Slider(id, items) {
+  function Slider(id) {
+    var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, Slider);
 
     this.id = id;
 
-    this.items = []; // list of all slider items as DOM objects
+    this.slides = []; // list of all slider slides as DOM objects
     this.position = 1;
 
-    this.container = document.getElementById(this.id);
-
-    this.container.classList.add('rsslider');
-
-    this.prevButton = this.addElement('button', 'rsslider__prev');
-    this.nextButton = this.addElement('button', 'rsslider__next');
+    this.wrapper = document.getElementById(this.id);
+    this.wrapper.classList.add('rsslider');
 
     // Add images from HTML markup
-    var embedded = this.container.querySelectorAll('img.rsslider__item');
-    embedded.forEach(function (element) {
+    this.wrapper.querySelectorAll('.rsslider__item').forEach(function (element) {
       element.classList.add('hidden');
-      this.items.push(element);
+      this.slides.push(element);
     }, this);
 
-    // Add addition images via Javascript
-    items.forEach(function (element) {
-      this.items.push(this.addElement('img', ['rsslider__item', 'hidden'], { src: element }));
-    }, this);
-
+    this.addButtons();
     this.showCurrent();
-
-    if (this.position === 1) {
-      this.hidePrevButton();
-    }
-    if (this.position === this.items.length) {
-      this.hideNextButton();
-    }
-
-    // Event listeners
-
-    var thisSlider = this;
-    this.container.addEventListener('click', function (event) {
-
-      if (event.target.classList.contains('rsslider__prev')) {
-        thisSlider.prev();
-      }
-
-      if (event.target.classList.contains('rsslider__next')) {
-        thisSlider.next();
-      }
-    });
   }
 
+  // Methods
+
+  // Adds 'prev' and 'next' buttons
+
+
   _createClass(Slider, [{
-    key: 'next',
-    value: function next() {
+    key: 'addButtons',
+    value: function addButtons() {
 
-      if (this.position >= this.items.length) {
-        this.position = this.items.length;
-        return;
-      }
+      this.prevButton = addDOMElement(this.wrapper, 'button', ['rsslider__prev']);
+      this.nextButton = addDOMElement(this.wrapper, 'button', ['rsslider__next']);
+      this.updateArrows();
 
-      if (this.position === 1) {
-        this.showPrevButton();
-      }
+      // Event listeners
 
-      this.hideCurrent();
-      this.position++;
-      this.showCurrent();
+      var thisSlider = this;
+      this.wrapper.addEventListener('click', function (event) {
 
-      if (this.position === this.items.length) {
-        this.hideNextButton();
-      }
+        if (event.target.classList.contains('rsslider__prev')) {
+          thisSlider.shift(-1);
+        }
+
+        if (event.target.classList.contains('rsslider__next')) {
+          thisSlider.shift(1);
+        }
+      });
     }
   }, {
-    key: 'prev',
-    value: function prev() {
+    key: 'checkPosition',
+    value: function checkPosition() {
+
+      if (this.position >= this.slides.length) {
+        this.position = this.slides.length;
+        this.showButton('next', false);
+        return;
+      } else {
+        this.showButton('next', true);
+      }
 
       if (this.position <= 1) {
         this.position = 1;
+        this.showButton('prev', false);
         return;
+      } else {
+        this.showButton('prev', true);
       }
+    }
+    /**
+     * @param  {int} delta Jumps by [delta] slides
+     */
 
-      if (this.position === this.items.length) {
-        this.showNextButton();
-      }
+  }, {
+    key: 'shift',
+    value: function shift(delta) {
 
+      this.checkPosition();
       this.hideCurrent();
-      this.position--;
-      this.showCurrent();
 
-      if (this.position === 1) {
-        this.hidePrevButton();
+      this.position += delta;
+
+      this.checkPosition();
+      this.showCurrent();
+    }
+  }, {
+    key: 'jump',
+    value: function jump(position) {
+
+      this.updateArrows();
+    }
+
+    /**
+     * Update 'prev'/'next' arrows on sides
+     * @param  {int} toPosition 
+     * @param  {int} fromPosition optional
+     */
+
+  }, {
+    key: 'updateArrows',
+    value: function updateArrows() {
+      var toPosition = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.position;
+      var fromPosition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.position;
+
+
+      switch (fromPosition) {
+        case 1:
+          this.showButton('prev', true);
+          break;
+        case this.slides.length:
+          this.showButton('next', true);
+          break;
+      }
+
+      switch (toPosition) {
+        case 1:
+          this.showButton('prev', false);
+          break;
+        case this.slides.length:
+          this.showButton('next', false);
+          break;
       }
     }
 
-    // Internal functions
-
     /**
-     * Adds an element to slider
-     * @param   {String} element tag
-     * @param   {String} or {Array} elementClass or array of classes
-     * @param   {Object} elementAttributes 
+     * Shows or hides control buttons
+     * @param   {String} button 
+     * @param   {String} tag Tag for element
+     * @param   {Array} classList List of classes
+     * @param   {Object} attList List of attributes
      *
      * @returns {Node} DOM object
      */
 
   }, {
-    key: 'addElement',
-    value: function addElement() {
+    key: 'showButton',
+    value: function showButton(button, show) {
 
-      if (arguments.length < 2) {
-        return false;
+      if (button == 'prev') {
+        if (show) {
+          this.prevButton.classList.remove('hidden');
+        } else {
+          this.prevButton.classList.add('hidden');
+        }
       }
 
-      var item = document.createElement(arguments[0]);
-
-      if (arguments[1] instanceof Array) {
-        arguments[1].forEach(function (element) {
-          item.classList.add(element);
-        });
-      } else {
-        item.classList.add(arguments[1]);
+      if (button == 'next') {
+        if (show) {
+          this.nextButton.classList.remove('hidden');
+        } else {
+          this.nextButton.classList.add('hidden');
+        }
       }
-
-      if (arguments.length > 2) {
-
-        var attributes = arguments[2];
-        Object.keys(attributes).forEach(function (key) {
-          item.setAttribute(key, attributes[key]);
-        });
-      }
-
-      this.container.appendChild(item);
-      return item;
     }
   }, {
     key: 'hideNextButton',
@@ -162,14 +185,52 @@ var Slider = function () {
   }, {
     key: 'hideCurrent',
     value: function hideCurrent() {
-      this.items[this.position - 1].classList.add('hidden');
+      this.slides[this.position - 1].classList.add('hidden');
     }
   }, {
     key: 'showCurrent',
     value: function showCurrent() {
-      this.items[this.position - 1].classList.remove('hidden');
+      this.slides[this.position - 1].classList.remove('hidden');
     }
   }]);
 
   return Slider;
 }();
+
+/**
+ * Adds an element to DOM
+ * @param   {Node} wrapper 
+ * @param   {String} tag Tag for element
+ * @param   {Array} classList List of classes
+ * @param   {Object} attList List of attributes
+ *
+ * @returns {Node} DOM object
+ */
+
+
+function addDOMElement(wrapper) {
+  var tag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'div';
+  var classList = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+  var attList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+
+  var DOMElement = document.createElement(tag);
+
+  // TODO: Проверить classList и attList на типы!
+
+  if (classList.length > 0) {
+    classList.forEach(function (item) {
+      return DOMElement.classList.add(item);
+    });
+  }
+
+  if (attList.length > 0) {
+    Object.keys(attList).forEach(function (key) {
+      return DOMElement.setAttribute(key, attList[key]);
+    });
+  }
+
+  wrapper.appendChild(DOMElement);
+
+  return DOMElement;
+}
