@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -34,9 +34,9 @@ var addDOMElement = function addDOMElement(wrapper) {
     });
   }
 
-  // if (wrapper instanceof )
-  console.log("wrapper:");
-  console.info(wrapper);
+  // if (wrapper instanceof ...)
+  // console.log("wrapper:");
+  // console.info(wrapper);
 
   wrapper.appendChild(DOMElement);
 

@@ -2,15 +2,12 @@
 
 class Slider {
 
-  constructor( id, config = {} ) {
-    
-    this.id = id;
+  constructor( id ) {
     
     this.slides = []; // list of all slider slides as DOM objects
     this.position = 1;
 
-    this.wrapper = document.getElementById(this.id);
-    this.wrapper.classList.add('rsslider');
+    this.wrapper = document.getElementById(id);
 
     // Add images from HTML markup
     this.wrapper.querySelectorAll('.rsslider__item').forEach( function(element) {
@@ -18,75 +15,27 @@ class Slider {
       this.slides.push(element);
     }, this);
 
-    this.addButtons();
-    this.showCurrent();
-
+    this.addArrows();
+    this.addPaginator();
+    this.showSlide(this.position);
   }
-
 
   // Methods
    
-  // Adds 'prev' and 'next' buttons
-  addButtons() {
-
-    this.prevButton = addDOMElement(this.wrapper, 'button', ['rsslider__prev']);
-    this.nextButton = addDOMElement(this.wrapper, 'button', ['rsslider__next']);
-    this.updateArrows();
-
-    // Event listeners
-    
-    let thisSlider = this;
-    this.wrapper.addEventListener('click', function(event){
-
-      if (event.target.classList.contains('rsslider__prev')) {
-        thisSlider.shift(-1);
-      }
-
-      if (event.target.classList.contains('rsslider__next')) {
-        thisSlider.shift(1);
-      }
-
-    });
-
-  }
-
-  checkPosition() {
-
-    if (this.position>=this.slides.length) {
-      this.position = this.slides.length;
-      this.showButton('next', false);
-      return;
-    } else {
-      this.showButton('next', true);
-    }
-
-    if (this.position<=1) {
-      this.position = 1;
-      this.showButton('prev', false);
-      return;
-    } else {
-      this.showButton('prev', true);
-    }
-
-  }
   /**
-   * @param  {int} delta Jumps by [delta] slides
+   * Add 'prev' and 'next' arrows
    */
-  shift(delta) { 
+  addArrows() {
 
-    this.checkPosition();
-    this.hideCurrent();
-    
-    this.position+=delta;
+    this.arrows = {};
 
-    this.checkPosition();
-    this.showCurrent();
-
-  }
-
-  jump(position) {
-
+    this.arrows['prev'] = addDOMElement(this.wrapper, 'button', ['rsslider__prev']);
+    this.arrows['next'] = addDOMElement(this.wrapper, 'button', ['rsslider__next']);
     this.updateArrows();
+
+    // Set event listeners
+    this.arrows['prev'].addEventListener( 'click', () => this.move(-1) );
+    this.arrows['next'].addEventListener( 'click', () => this.move(1) );
 
   }
 
@@ -99,80 +48,125 @@ class Slider {
 
     switch (fromPosition) {
     case 1:
-      this.showButton('prev', true);
+      this.showArrows('prev', true);
       break;
     case this.slides.length:
-      this.showButton('next', true);
+      this.showArrows('next', true);
       break;
     }
-    
+
     switch (toPosition) {
     case 1:
-      this.showButton('prev', false);
+      this.showArrows('prev', false);
       break;
     case this.slides.length:
-      this.showButton('next', false);
+      this.showArrows('next', false);
       break;
     }
+
+  }
+
+  addPaginator() {
+
+    this.paginator = addDOMElement(this.wrapper, 'div', ['rsslider__paginator']);
+    this.paginatorElements = [];
+
+    this.slides.forEach( () => 
+      this.paginatorElements.push(addDOMElement(this.paginator, 'button', ['rsslider__paginator__button'])) );
+
+    // Set event listeners to each paginator element
+
+    this.paginatorElements.forEach( (element, index) => {
+      element.addEventListener( 'click', () => this.jump(index+1));
+    });
+
+    this.updatePaginator();
+
+  }
+
+  updatePaginator(toPosition=this.position, fromPosition=this.position) {
+
+    this.paginatorElements[fromPosition-1].classList.remove('active');
+    this.paginatorElements[toPosition-1].classList.add('active');
+
+  }
+
+
+  move(delta) { 
+
+    this.setPosition(this.position + delta);
+
+  }
+
+  jump(position) {
+
+    this.setPosition(position);
+
+  }
+
+
+  /**
+   * Set new position of slider, update all controls depending on initial and target position
+   * @param  {int} position
+   */
+  setPosition(position) {
+
+    if( position < 1 || position > this.slides.length) {
+      return false; // error, no action
+    } else if(position===this.position) {
+      return false; // TODO: Decide should we handle this excusively
+    }
+
+    let oldPosition = this.position;
+
+    this.showSlide(oldPosition,false); // Note: this.position may be out of range!
+    this.position = position;
+    this.showSlide();
+
+    this.updateArrows(position, oldPosition);
+    this.updatePaginator(position, oldPosition);
     
   }
 
+
   /**
-   * Shows or hides control buttons
-   * @param   {String} button 
-   * @param   {String} tag Tag for element
-   * @param   {Array} classList List of classes
-   * @param   {Object} attList List of attributes
-   *
-   * @returns {Node} DOM object
+   * Show or hide 'prev'/'next' arrow
+   * @param   {String} button 'prev' or 'next'
+   * @returns {Boolean} show 
    */
-  showButton(button, show) {
+  showArrows(button, show) {
 
-    if (button=='prev') {
-      if (show) {
-        this.prevButton.classList.remove('hidden');
-      } else {
-        this.prevButton.classList.add('hidden');
-      }
+    if (show) {
+      this.arrows[button].classList.remove('hidden');
+    } else {
+      this.arrows[button].classList.add('hidden');
     }
 
-    if (button=='next') {
-      if (show) {
-        this.nextButton.classList.remove('hidden');
-      } else {
-        this.nextButton.classList.add('hidden');
-      }
+  }
+  
+  /**
+   * Show or hide slide of given position. Show current slide by default
+   * @param  {} position=this.position
+   * @param  {} state=true
+   */
+  showSlide(position=this.position, state=true) {
+
+    if (position<1 || position>this.slides.length) {
+      return false;
     }
 
+    if(state) {
+      this.slides[position-1].classList.remove('hidden');
+    } else {
+      this.slides[position-1].classList.add('hidden');
+    }
 
-  }
-
-  hideNextButton() {
-    this.nextButton.classList.add('hidden');
-  }
-
-  hidePrevButton() {
-    this.prevButton.classList.add('hidden');
-  }
-
-  showNextButton() {
-    this.nextButton.classList.remove('hidden');
-  }
-
-  showPrevButton() {
-    this.prevButton.classList.remove('hidden');
-  }
-
-  hideCurrent() {
-    this.slides[this.position-1].classList.add('hidden');
-  }
-
-  showCurrent() {
-    this.slides[this.position-1].classList.remove('hidden');
   }
 
 }
 
+
+// =================== To be MODULED...
 
 /**
  * Adds an element to DOM

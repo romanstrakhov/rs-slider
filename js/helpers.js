@@ -21,9 +21,9 @@ let addDOMElement = function( wrapper, tag='div', classList=[], attList={} ) {
     Object.keys(attList).forEach( key  => DOMElement.setAttribute(key, attList[key]) );
   }
 
-  // if (wrapper instanceof )
-  console.log("wrapper:");
-  console.info(wrapper);
+  // if (wrapper instanceof ...)
+  // console.log("wrapper:");
+  // console.info(wrapper);
 
   wrapper.appendChild(DOMElement);
   

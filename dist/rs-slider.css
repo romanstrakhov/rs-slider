@@ -10,8 +10,8 @@
   .rsslider__item {
     z-index: 10;
     transition: opacity linear .3s; }
-    .rsslider__item .scrollable {
-      overflow: scroll; }
+    .rsslider__item.scrollable {
+      overflow-y: scroll; }
     .rsslider__item > div {
       padding: 1em 3em;
       background-color: #eee;
@@ -56,16 +56,15 @@
       width: 8px;
       height: 8px;
       border-radius: 4px;
-      margin: 1px;
+      margin: 3px;
       padding: 0;
       border: 0;
-      background-color: #ccc;
+      background-color: #fff;
       box-shadow: 1px 1px 5px black;
-      opacity: 0.5;
       cursor: hand; }
       .rsslider__paginator__button:hover {
-        background-color: #fff;
+        background-color: red;
         opacity: 1; }
       .rsslider__paginator__button.active {
-        background-color: #fff;
+        background-color: darkred;
         cursor: pointer; }
