@@ -43,10 +43,10 @@
       visibility: hidden; }
   .rsslider__prev {
     left: 0;
-    background-image: url("i/prev.png"); }
+    background-image: url("prev.3e8cadf3.png"); }
   .rsslider__next {
     right: 0;
-    background-image: url("i/next.png"); }
+    background-image: url("next.8d3db09f.png"); }
   .rsslider__paginator {
     position: absolute;
     bottom: 10px;
