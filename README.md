@@ -1,6 +1,9 @@
 # rs-slider
 JS slider implementation
 
+## Project goals
+The code is written for educational purposes.
+
 ## We are using `yarn` and `parcel` bundler.
 
 ## Installing
