@@ -7,7 +7,7 @@
  *
  * @returns {Node} DOM object
  */
-let addDOMElement = function( wrapper, tag='div', classList=[], attList={} ) {
+export let addDOMElement = function( wrapper, tag='div', classList=[], attList={} ) {
     
   let DOMElement = document.createElement(tag);
 
@@ -21,14 +21,8 @@ let addDOMElement = function( wrapper, tag='div', classList=[], attList={} ) {
     Object.keys(attList).forEach( key  => DOMElement.setAttribute(key, attList[key]) );
   }
 
-  // if (wrapper instanceof ...)
-  // console.log("wrapper:");
-  // console.info(wrapper);
-
   wrapper.appendChild(DOMElement);
   
   return DOMElement;
 
 };
-
-export default {addDOMElement};

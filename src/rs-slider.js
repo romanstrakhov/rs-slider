@@ -1,6 +1,6 @@
-// import addDOMElement from './helpers.js';
+import { addDOMElement } from './helpers.js';
 
-class Slider {
+export class Slider {
 
   constructor( id ) {
     
@@ -160,39 +160,5 @@ class Slider {
     } else {
       this.slides[position-1].classList.add('hidden');
     }
-
   }
-
-}
-
-
-// =================== To be MODULED...
-
-/**
- * Adds an element to DOM
- * @param   {Node} wrapper 
- * @param   {String} tag Tag for element
- * @param   {Array} classList List of classes
- * @param   {Object} attList List of attributes
- *
- * @returns {Node} DOM object
- */
-function addDOMElement( wrapper, tag='div', classList=[], attList={} ) {
-    
-  let DOMElement = document.createElement(tag);
-
-  // TODO: Проверить classList и attList на типы!
-
-  if (classList.length > 0) {
-    classList.forEach( item => DOMElement.classList.add(item));
-  }
-
-  if (attList.length > 0) {
-    Object.keys(attList).forEach( key  => DOMElement.setAttribute(key, attList[key]) );
-  }
-
-  wrapper.appendChild(DOMElement);
-  
-  return DOMElement;
-
 }

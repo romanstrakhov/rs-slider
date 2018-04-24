@@ -4,7 +4,8 @@
   "description": "JS slider implementation",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "parcel index.html"
   },
   "repository": {
     "type": "git",
@@ -22,16 +23,6 @@
   },
   "homepage": "https://github.com/romanstrakhov/rs-slider#readme",
   "dependencies": {
-    "eslint": "^4.19.1",
-    "gulp": "^3.9.1",
-    "gulp-connect": "^5.5.0",
-    "gulp-eslint": "^4.0.2",
-    "gulp-sass": "^4.0.1",
-    "gulp-watch": "^5.0.0"
-  },
-  "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "gulp-babel": "^7.0.1"
+    "node-sass": "^4.8.3"
   }
 }
