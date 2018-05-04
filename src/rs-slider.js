@@ -1,8 +1,8 @@
-import { addDOMElement } from './helpers.js';
+import { addDOMElement, uniteObjects } from './helpers.js';
 
 export class Slider {
 
-  constructor( id ) {
+  constructor( id, config = {} ) {
     
     this.slides = []; // list of all slider slides as DOM objects
     this.position = 1;
@@ -15,13 +15,30 @@ export class Slider {
       this.slides.push(element);
     }, this);
 
-    this.addArrows();
-    this.addPaginator();
+    this.parseConfig(config);
+
+    if (this.config.controls.arrows===true) this.addArrows();
+    if (this.config.controls.pagination) this.addPaginator(this.config.controls.pagination);
     this.showSlide(this.position);
   }
 
   // Methods
-   
+
+  parseConfig (config) {
+
+    // Defaults
+    let defaults = {
+      controls: {
+        arrows: true,
+        pagination: 'dots'
+      },
+      style: 'fade'
+    };
+
+    if (config) { this.config = uniteObjects(defaults, config); }
+  }
+
+
   /**
    * Add 'prev' and 'next' arrows
    */
@@ -66,14 +83,23 @@ export class Slider {
 
   }
 
-  addPaginator() {
+  addPaginator(style) {
 
     this.paginator = addDOMElement(this.wrapper, 'div', ['rsslider__paginator']);
     this.paginatorElements = [];
 
-    this.slides.forEach( () => 
-      this.paginatorElements.push(addDOMElement(this.paginator, 'button', ['rsslider__paginator__button'])) );
+    let num = 0;
 
+    switch (style) {
+    case ('numbers'):
+      this.slides.forEach( () =>
+        this.paginatorElements.push(addDOMElement(this.paginator, 'button', ['rsslider__paginator_numbered__button'], {}, num++)) );
+      break;
+    default: // dots
+      this.slides.forEach( () => 
+        this.paginatorElements.push(addDOMElement(this.paginator, 'button', ['rsslider__paginator__button'])) );
+    }
+  
     // Set event listeners to each paginator element
 
     this.paginatorElements.forEach( (element, index) => {
@@ -84,6 +110,11 @@ export class Slider {
 
   }
 
+  /**
+   * Redraws paginator
+   * @param  {int} toPosition=this.position
+   * @param  {int} fromPosition=this.position
+   */
   updatePaginator(toPosition=this.position, fromPosition=this.position) {
 
     this.paginatorElements[fromPosition-1].classList.remove('active');
@@ -123,11 +154,11 @@ export class Slider {
     this.position = position;
     this.showSlide();
 
-    this.updateArrows(position, oldPosition);
-    this.updatePaginator(position, oldPosition);
+    // Update controls
+    if (this.config.controls.arrows) this.updateArrows(position, oldPosition);
+    if (this.config.controls.pagination && this.config.controls.pagination!=='none') this.updatePaginator(position, oldPosition);
     
   }
-
 
   /**
    * Show or hide 'prev'/'next' arrow

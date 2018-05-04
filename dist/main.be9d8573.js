@@ -77,12 +77,15 @@ parcelRequire = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({8:[function(require,module,exports) {
+})({6:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 /**
  * Adds an element to DOM
  * @param   {Node} wrapper 
@@ -96,9 +99,11 @@ var addDOMElement = exports.addDOMElement = function addDOMElement(wrapper) {
   var tag = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'div';
   var classList = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
   var attList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+  var value = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
 
 
   var DOMElement = document.createElement(tag);
+  DOMElement.innerHTML = value;
 
   // TODO: Проверить classList и attList на типы!
 
@@ -118,7 +123,30 @@ var addDOMElement = exports.addDOMElement = function addDOMElement(wrapper) {
 
   return DOMElement;
 };
-},{}],5:[function(require,module,exports) {
+
+/**
+ * Unites two Objects
+ * TODO: Switch to lodash?
+ * @param  {Object} first Object (defaults)
+ * @param  {Object} second Object (user)
+ */
+var uniteObjects = exports.uniteObjects = function uniteObjects(first, second) {
+
+  var result = Object.assign({}, first);
+  result = Object.assign(result, second);
+
+  Object.keys(result).forEach(function (key) {
+    if (first[key] instanceof Array && second[key] instanceof Array) {
+      // concatenates and uniques array 
+      result[key] = [].concat(_toConsumableArray(new Set([].concat(_toConsumableArray(first[key]), _toConsumableArray(second[key])))));
+    } else if (first[key] instanceof Object && second[key] instanceof Object) {
+      result[key] = uniteObjects(first[key], second[key]);
+    }
+  });
+
+  return result;
+};
+},{}],3:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -134,6 +162,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var Slider = exports.Slider = function () {
   function Slider(id) {
+    var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, Slider);
 
     this.slides = []; // list of all slider slides as DOM objects
@@ -147,19 +177,38 @@ var Slider = exports.Slider = function () {
       this.slides.push(element);
     }, this);
 
-    this.addArrows();
-    this.addPaginator();
+    this.parseConfig(config);
+
+    if (this.config.controls.arrows === true) this.addArrows();
+    if (this.config.controls.pagination) this.addPaginator(this.config.controls.pagination);
     this.showSlide(this.position);
   }
 
   // Methods
 
-  /**
-   * Add 'prev' and 'next' arrows
-   */
-
-
   _createClass(Slider, [{
+    key: 'parseConfig',
+    value: function parseConfig(config) {
+
+      // Defaults
+      var defaults = {
+        controls: {
+          arrows: true,
+          pagination: 'dots'
+        },
+        style: 'fade'
+      };
+
+      if (config) {
+        this.config = (0, _helpers.uniteObjects)(defaults, config);
+      }
+    }
+
+    /**
+     * Add 'prev' and 'next' arrows
+     */
+
+  }, {
     key: 'addArrows',
     value: function addArrows() {
       var _this = this;
@@ -212,15 +261,26 @@ var Slider = exports.Slider = function () {
     }
   }, {
     key: 'addPaginator',
-    value: function addPaginator() {
+    value: function addPaginator(style) {
       var _this2 = this;
 
       this.paginator = (0, _helpers.addDOMElement)(this.wrapper, 'div', ['rsslider__paginator']);
       this.paginatorElements = [];
 
-      this.slides.forEach(function () {
-        return _this2.paginatorElements.push((0, _helpers.addDOMElement)(_this2.paginator, 'button', ['rsslider__paginator__button']));
-      });
+      var num = 0;
+
+      switch (style) {
+        case 'numbers':
+          this.slides.forEach(function () {
+            return _this2.paginatorElements.push((0, _helpers.addDOMElement)(_this2.paginator, 'button', ['rsslider__paginator_numbered__button'], {}, num++));
+          });
+          break;
+        default:
+          // dots
+          this.slides.forEach(function () {
+            return _this2.paginatorElements.push((0, _helpers.addDOMElement)(_this2.paginator, 'button', ['rsslider__paginator__button']));
+          });
+      }
 
       // Set event listeners to each paginator element
 
@@ -232,6 +292,13 @@ var Slider = exports.Slider = function () {
 
       this.updatePaginator();
     }
+
+    /**
+     * Redraws paginator
+     * @param  {int} toPosition=this.position
+     * @param  {int} fromPosition=this.position
+     */
+
   }, {
     key: 'updatePaginator',
     value: function updatePaginator() {
@@ -276,8 +343,9 @@ var Slider = exports.Slider = function () {
       this.position = position;
       this.showSlide();
 
-      this.updateArrows(position, oldPosition);
-      this.updatePaginator(position, oldPosition);
+      // Update controls
+      if (this.config.controls.arrows) this.updateArrows(position, oldPosition);
+      if (this.config.controls.pagination && this.config.controls.pagination !== 'none') this.updatePaginator(position, oldPosition);
     }
 
     /**
@@ -324,7 +392,7 @@ var Slider = exports.Slider = function () {
 
   return Slider;
 }();
-},{"./helpers.js":8}],11:[function(require,module,exports) {
+},{"./helpers.js":6}],9:[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -354,7 +422,7 @@ function getBaseURL(url) {
 
 exports.getBundleURL = getBundleURLCached;
 exports.getBaseURL = getBaseURL;
-},{}],7:[function(require,module,exports) {
+},{}],5:[function(require,module,exports) {
 var bundle = require('./bundle-url');
 
 function updateLink(link) {
@@ -385,13 +453,13 @@ function reloadCSS() {
 }
 
 module.exports = reloadCSS;
-},{"./bundle-url":11}],6:[function(require,module,exports) {
+},{"./bundle-url":9}],4:[function(require,module,exports) {
 
         var reloadCSS = require('_css_loader');
         module.hot.dispose(reloadCSS);
         module.hot.accept(reloadCSS);
       
-},{"./../img/prev.png":[["prev.343a05d8.png",9],9],"./../img/next.png":[["next.9e3d13ce.png",10],10],"_css_loader":7}],4:[function(require,module,exports) {
+},{"./../img/prev.png":[["prev.343a05d8.png",7],7],"./../img/next.png":[["next.9e3d13ce.png",8],8],"_css_loader":5}],2:[function(require,module,exports) {
 'use strict';
 
 var _rsSlider = require('./rs-slider');
@@ -399,8 +467,16 @@ var _rsSlider = require('./rs-slider');
 require('./styles/rs-slider.scss');
 
 var sliderID = 'mySlider';
-var testSlider = new _rsSlider.Slider(sliderID);
-},{"./rs-slider":5,"./styles/rs-slider.scss":6}],16:[function(require,module,exports) {
+var sliderConfig = {
+  controls: {
+    // arrows: false, // true by default
+    pagination: 'numbers' // ( 'dots' | 'numbers' | 'none' by default ) 
+  },
+  style: 'fade' // slide-v | slide-h | fade by default 
+};
+var testSlider = new _rsSlider.Slider(sliderID, sliderConfig);
+console.info(testSlider.config);
+},{"./rs-slider":3,"./styles/rs-slider.scss":4}],21:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -430,7 +506,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '62390' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51233' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -569,5 +645,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},[16,4])
+},{}]},{},[21,2])
 //# sourceMappingURL=/main.be9d8573.map

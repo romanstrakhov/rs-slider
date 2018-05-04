@@ -5,10 +5,10 @@
   position: relative;
   overflow: hidden; }
   .rsslider__wrapper {
+    z-index: 10;
     width: 100%;
     height: 100%; }
   .rsslider__item {
-    z-index: 10;
     transition: opacity linear .3s;
     position: absolute;
     width: 100%;
@@ -32,13 +32,13 @@
     .rsslider__item.hidden {
       opacity: 0; }
   .rsslider__prev, .rsslider__next {
+    z-index: 15;
     width: 50px;
     height: 100px;
     position: absolute;
     top: 50%;
     margin-top: -50px;
     cursor: hand;
-    z-index: 20;
     background-color: transparent;
     border: 0;
     background-position: 50% 50%;
@@ -54,6 +54,7 @@
     right: 0;
     background-image: url("next.9e3d13ce.png"); }
   .rsslider__paginator {
+    z-index: 20;
     position: absolute;
     bottom: 10px;
     text-align: center;
@@ -73,4 +74,30 @@
         opacity: 1; }
       .rsslider__paginator__button.active {
         background-color: darkred;
+        cursor: pointer; }
+  .rsslider__paginator_numbered {
+    z-index: 20;
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    width: 100%; }
+    .rsslider__paginator_numbered__button {
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      line-height: 20px;
+      margin: 3px;
+      padding: 0;
+      border: 0;
+      background-color: #fff;
+      box-shadow: 1px 1px 5px black;
+      cursor: hand; }
+      .rsslider__paginator_numbered__button:hover {
+        background-color: black;
+        color: white;
+        opacity: 1; }
+      .rsslider__paginator_numbered__button.active {
+        background-color: darkred;
+        color: white;
         cursor: pointer; }
