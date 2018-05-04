@@ -77,7 +77,7 @@ parcelRequire = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({11:[function(require,module,exports) {
+})({8:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -118,7 +118,7 @@ var addDOMElement = exports.addDOMElement = function addDOMElement(wrapper) {
 
   return DOMElement;
 };
-},{}],4:[function(require,module,exports) {
+},{}],5:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -324,7 +324,7 @@ var Slider = exports.Slider = function () {
 
   return Slider;
 }();
-},{"./helpers.js":11}],13:[function(require,module,exports) {
+},{"./helpers.js":8}],11:[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -385,13 +385,13 @@ function reloadCSS() {
 }
 
 module.exports = reloadCSS;
-},{"./bundle-url":13}],5:[function(require,module,exports) {
+},{"./bundle-url":11}],6:[function(require,module,exports) {
 
         var reloadCSS = require('_css_loader');
         module.hot.dispose(reloadCSS);
         module.hot.accept(reloadCSS);
       
-},{"./../img/prev.png":[["prev.3e8cadf3.png",8],8],"./../img/next.png":[["next.8d3db09f.png",9],9],"_css_loader":7}],2:[function(require,module,exports) {
+},{"./../img/prev.png":[["prev.343a05d8.png",9],9],"./../img/next.png":[["next.9e3d13ce.png",10],10],"_css_loader":7}],4:[function(require,module,exports) {
 'use strict';
 
 var _rsSlider = require('./rs-slider');
@@ -400,7 +400,7 @@ require('./styles/rs-slider.scss');
 
 var sliderID = 'mySlider';
 var testSlider = new _rsSlider.Slider(sliderID);
-},{"./rs-slider":4,"./styles/rs-slider.scss":5}],15:[function(require,module,exports) {
+},{"./rs-slider":5,"./styles/rs-slider.scss":6}],16:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -430,7 +430,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '56110' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '62390' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -569,5 +569,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},[15,2])
-//# sourceMappingURL=/main.9942976a.map
+},{}]},{},[16,4])
+//# sourceMappingURL=/main.be9d8573.map
