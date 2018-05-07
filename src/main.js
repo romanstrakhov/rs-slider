@@ -7,7 +7,7 @@ var sliderConfig = {
     // arrows: false, // true by default
     pagination: 'numbers', // ( 'dots' | 'numbers' | 'none' by default ) 
   },
-  style: 'fade' // slide-v | slide-h | fade by default 
+  style: 'slide-h' // slide-v | slide-h | fade by default 
 };
 var testSlider = new Slider(sliderID, sliderConfig);
-console.info(testSlider.config);
+// console.info(testSlider.config);

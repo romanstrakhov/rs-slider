@@ -7,15 +7,36 @@ export class Slider {
     this.slides = []; // list of all slider slides as DOM objects
     this.position = 1;
 
+    this.parseConfig(config);
+
     this.wrapper = document.getElementById(id);
 
-    // Add images from HTML markup
+    switch(this.config.style){
+    case 'slide-h':
+      break;
+    case 'slide-v':
+      break;
+    default:
+      this.config.style = 'fade';
+    }
+
+    this.wrapper.classList.add(`rsslider_style_${this.config.style}`);
+
+    // Add slides from HTML markup
     this.wrapper.querySelectorAll('.rsslider__item').forEach( function(element) {
-      element.classList.add('hidden');
+      switch(this.config.style){
+      case 'slide-h':
+        element.classList.add('hidden_right');
+        break;
+      case 'slide-v':
+        element.classList.add('hidden_down');
+        break;
+      case 'fade':
+      default:
+        element.classList.add('hidden');
+      }
       this.slides.push(element);
     }, this);
-
-    this.parseConfig(config);
 
     if (this.config.controls.arrows===true) this.addArrows();
     if (this.config.controls.pagination) this.addPaginator(this.config.controls.pagination);
@@ -88,7 +109,7 @@ export class Slider {
     this.paginator = addDOMElement(this.wrapper, 'div', ['rsslider__paginator']);
     this.paginatorElements = [];
 
-    let num = 0;
+    let num = 1;
 
     switch (style) {
     case ('numbers'):
@@ -149,11 +170,48 @@ export class Slider {
     }
 
     let oldPosition = this.position;
-
-    this.showSlide(oldPosition,false); // Note: this.position may be out of range!
     this.position = position;
-    this.showSlide();
 
+    let direction = '';
+    let step = 0;
+
+    switch (this.config.style) {
+    case 'slide-h':
+      if (position!=oldPosition) {
+        step = (position > oldPosition)?1:-1;
+        direction = (position > oldPosition)?'left':'right';
+      }
+      this.showSlide(oldPosition, false, direction);
+      if (Math.abs(position-oldPosition) > 1) {
+        for (let i = oldPosition + step; i!=position; i+=step) {
+          this.showSlide(i, true, direction);
+          this.showSlide(i, false, direction);
+        }
+      }
+      this.showSlide(position, true, direction);
+      break;
+    
+    case 'slide-v':
+      if (position!=oldPosition) {
+        step = (position > oldPosition)?1:-1;
+        direction = (position > oldPosition)?'up':'down';
+      }
+      this.showSlide(oldPosition, false, direction);
+      if (Math.abs(position-oldPosition) > 1) {
+        for (let i = oldPosition + step; i!=position; i+=step) {
+          this.showSlide(i, true, direction);
+          this.showSlide(i, false, direction);
+        }
+      }
+      this.showSlide(position, true, direction);
+      break;
+
+    case 'fade':
+    default: 
+      this.showSlide(oldPosition, false);
+      this.showSlide(position, true);
+    } // switch style
+  
     // Update controls
     if (this.config.controls.arrows) this.updateArrows(position, oldPosition);
     if (this.config.controls.pagination && this.config.controls.pagination!=='none') this.updatePaginator(position, oldPosition);
@@ -177,19 +235,48 @@ export class Slider {
   
   /**
    * Show or hide slide of given position. Show current slide by default
-   * @param  {} position=this.position
-   * @param  {} state=true
+   * @param  {Int} position=this.position
+   * @param  {Bool} state=true
+   * @param  {String} direction=''
    */
-  showSlide(position=this.position, state=true) {
+  showSlide(position=this.position, state=true, direction='') {
 
     if (position<1 || position>this.slides.length) {
       return false;
     }
 
-    if(state) {
-      this.slides[position-1].classList.remove('hidden');
-    } else {
-      this.slides[position-1].classList.add('hidden');
-    }
+    let indirection = '';
+
+    switch (this.config.style) {
+    case 'slide-h':
+      direction = (direction=='right')?'right':'left'; // set left by default
+      indirection = (direction=='left')?'right':'left';
+      if (state) {
+        // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
+        this.slides[position-1].classList.remove(`hidden_${indirection}`);
+      } else {
+        this.slides[position-1].classList.add(`hidden_${direction}`);
+      }
+      break;
+    case 'slide-v':
+      direction = (direction=='down')?'down':'up';  // set up by default
+      indirection = (direction=='up')?'down':'up';
+      if (state) {
+        // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
+        console.log (`remove hidden_${indirection} for ${position}`);
+        this.slides[position-1].classList.remove(`hidden_${indirection}`);
+      } else {
+        this.slides[position-1].classList.add(`hidden_${direction}`);
+      }
+      break;
+    case 'fade':
+    default: 
+      if(state) {
+        this.slides[position-1].classList.remove('hidden');
+      } else {
+        this.slides[position-1].classList.add('hidden');
+      }
+    } // switch style
+
   }
 }

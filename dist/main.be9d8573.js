@@ -169,15 +169,36 @@ var Slider = exports.Slider = function () {
     this.slides = []; // list of all slider slides as DOM objects
     this.position = 1;
 
+    this.parseConfig(config);
+
     this.wrapper = document.getElementById(id);
 
-    // Add images from HTML markup
+    switch (this.config.style) {
+      case 'slide-h':
+        break;
+      case 'slide-v':
+        break;
+      default:
+        this.config.style = 'fade';
+    }
+
+    this.wrapper.classList.add('rsslider_style_' + this.config.style);
+
+    // Add slides from HTML markup
     this.wrapper.querySelectorAll('.rsslider__item').forEach(function (element) {
-      element.classList.add('hidden');
+      switch (this.config.style) {
+        case 'slide-h':
+          element.classList.add('hidden_right');
+          break;
+        case 'slide-v':
+          element.classList.add('hidden_down');
+          break;
+        case 'fade':
+        default:
+          element.classList.add('hidden');
+      }
       this.slides.push(element);
     }, this);
-
-    this.parseConfig(config);
 
     if (this.config.controls.arrows === true) this.addArrows();
     if (this.config.controls.pagination) this.addPaginator(this.config.controls.pagination);
@@ -267,7 +288,7 @@ var Slider = exports.Slider = function () {
       this.paginator = (0, _helpers.addDOMElement)(this.wrapper, 'div', ['rsslider__paginator']);
       this.paginatorElements = [];
 
-      var num = 0;
+      var num = 1;
 
       switch (style) {
         case 'numbers':
@@ -338,10 +359,47 @@ var Slider = exports.Slider = function () {
       }
 
       var oldPosition = this.position;
-
-      this.showSlide(oldPosition, false); // Note: this.position may be out of range!
       this.position = position;
-      this.showSlide();
+
+      var direction = '';
+      var step = 0;
+
+      switch (this.config.style) {
+        case 'slide-h':
+          if (position != oldPosition) {
+            step = position > oldPosition ? 1 : -1;
+            direction = position > oldPosition ? 'left' : 'right';
+          }
+          this.showSlide(oldPosition, false, direction);
+          if (Math.abs(position - oldPosition) > 1) {
+            for (var i = oldPosition + step; i != position; i += step) {
+              this.showSlide(i, true, direction);
+              this.showSlide(i, false, direction);
+            }
+          }
+          this.showSlide(position, true, direction);
+          break;
+
+        case 'slide-v':
+          if (position != oldPosition) {
+            step = position > oldPosition ? 1 : -1;
+            direction = position > oldPosition ? 'up' : 'down';
+          }
+          this.showSlide(oldPosition, false, direction);
+          if (Math.abs(position - oldPosition) > 1) {
+            for (var _i = oldPosition + step; _i != position; _i += step) {
+              this.showSlide(_i, true, direction);
+              this.showSlide(_i, false, direction);
+            }
+          }
+          this.showSlide(position, true, direction);
+          break;
+
+        case 'fade':
+        default:
+          this.showSlide(oldPosition, false);
+          this.showSlide(position, true);
+      } // switch style
 
       // Update controls
       if (this.config.controls.arrows) this.updateArrows(position, oldPosition);
@@ -367,8 +425,9 @@ var Slider = exports.Slider = function () {
 
     /**
      * Show or hide slide of given position. Show current slide by default
-     * @param  {} position=this.position
-     * @param  {} state=true
+     * @param  {Int} position=this.position
+     * @param  {Bool} state=true
+     * @param  {String} direction=''
      */
 
   }, {
@@ -376,17 +435,45 @@ var Slider = exports.Slider = function () {
     value: function showSlide() {
       var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.position;
       var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
 
       if (position < 1 || position > this.slides.length) {
         return false;
       }
 
-      if (state) {
-        this.slides[position - 1].classList.remove('hidden');
-      } else {
-        this.slides[position - 1].classList.add('hidden');
-      }
+      var indirection = '';
+
+      switch (this.config.style) {
+        case 'slide-h':
+          direction = direction == 'right' ? 'right' : 'left'; // set left by default
+          indirection = direction == 'left' ? 'right' : 'left';
+          if (state) {
+            // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
+            this.slides[position - 1].classList.remove('hidden_' + indirection);
+          } else {
+            this.slides[position - 1].classList.add('hidden_' + direction);
+          }
+          break;
+        case 'slide-v':
+          direction = direction == 'down' ? 'down' : 'up'; // set up by default
+          indirection = direction == 'up' ? 'down' : 'up';
+          if (state) {
+            // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
+            console.log('remove hidden_' + indirection + ' for ' + position);
+            this.slides[position - 1].classList.remove('hidden_' + indirection);
+          } else {
+            this.slides[position - 1].classList.add('hidden_' + direction);
+          }
+          break;
+        case 'fade':
+        default:
+          if (state) {
+            this.slides[position - 1].classList.remove('hidden');
+          } else {
+            this.slides[position - 1].classList.add('hidden');
+          }
+      } // switch style
     }
   }]);
 
@@ -472,11 +559,11 @@ var sliderConfig = {
     // arrows: false, // true by default
     pagination: 'numbers' // ( 'dots' | 'numbers' | 'none' by default ) 
   },
-  style: 'fade' // slide-v | slide-h | fade by default 
+  style: 'slide-h' // slide-v | slide-h | fade by default 
 };
 var testSlider = new _rsSlider.Slider(sliderID, sliderConfig);
-console.info(testSlider.config);
-},{"./rs-slider":3,"./styles/rs-slider.scss":4}],21:[function(require,module,exports) {
+// console.info(testSlider.config);
+},{"./rs-slider":3,"./styles/rs-slider.scss":4}],13:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -506,7 +593,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '51233' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52059' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -645,5 +732,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},[21,2])
+},{}]},{},[13,2])
 //# sourceMappingURL=/main.be9d8573.map
