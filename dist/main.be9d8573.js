@@ -459,7 +459,11 @@ var Slider = function () {
 }();
 
 exports.default = Slider;
+<<<<<<< HEAD
 },{"./helpers":6}],9:[function(require,module,exports) {
+=======
+},{"./helpers":8}],9:[function(require,module,exports) {
+>>>>>>> c1311fa94044c0e41bbfe729d49b5a21e386094b
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
