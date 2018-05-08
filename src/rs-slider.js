@@ -1,6 +1,6 @@
 import { addDOMElement, uniteObjects } from './helpers';
 
-export class Slider {
+export default class Slider {
   constructor(id, config = {}) {
     this.slides = []; // list of all slider slides as DOM objects
     this.position = 1;
@@ -210,13 +210,14 @@ export class Slider {
    * Show or hide slide of given position. Show current slide by default
    * @param  {Int} position = this.position
    * @param  {Bool} state = true
-   * @param  {String} direction = ''
+   * @param  {String} dir = ''
    */
-  showSlide(position = this.position, state = true, direction = '') {
+  showSlide(position = this.position, state = true, dir = '') {
     if (position < 1 || position > this.slides.length) {
       return;
     }
 
+    let direction = dir;
     let indirection = '';
 
     switch (this.config.style) {
