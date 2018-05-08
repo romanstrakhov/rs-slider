@@ -77,7 +77,7 @@ parcelRequire = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({8:[function(require,module,exports) {
+})({6:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -88,10 +88,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 /**
  * Adds an element to DOM
- * @param   {Node} wrapper 
+ * @param   {Node} wrapper
  * @param   {String} tag Tag for element
  * @param   {Array} classList List of classes
  * @param   {Object} attList List of attributes
+ * @param   {String} value Inner HTML
  *
  * @returns {Node} DOM object
  */
@@ -101,11 +102,8 @@ var addDOMElement = exports.addDOMElement = function addDOMElement(wrapper) {
   var attList = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
   var value = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
 
-
   var DOMElement = document.createElement(tag);
   DOMElement.innerHTML = value;
-
-  // TODO: Проверить classList и attList на типы!
 
   if (classList.length > 0) {
     classList.forEach(function (item) {
@@ -118,9 +116,7 @@ var addDOMElement = exports.addDOMElement = function addDOMElement(wrapper) {
       return DOMElement.setAttribute(key, attList[key]);
     });
   }
-
   wrapper.appendChild(DOMElement);
-
   return DOMElement;
 };
 
@@ -131,13 +127,12 @@ var addDOMElement = exports.addDOMElement = function addDOMElement(wrapper) {
  * @param  {Object} second Object (user)
  */
 var uniteObjects = exports.uniteObjects = function uniteObjects(first, second) {
-
   var result = Object.assign({}, first);
   result = Object.assign(result, second);
 
   Object.keys(result).forEach(function (key) {
     if (first[key] instanceof Array && second[key] instanceof Array) {
-      // concatenates and uniques array 
+      // concatenates and uniques array
       result[key] = [].concat(_toConsumableArray(new Set([].concat(_toConsumableArray(first[key]), _toConsumableArray(second[key])))));
     } else if (first[key] instanceof Object && second[key] instanceof Object) {
       result[key] = uniteObjects(first[key], second[key]);
@@ -152,7 +147,6 @@ var uniteObjects = exports.uniteObjects = function uniteObjects(first, second) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Slider = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -160,7 +154,7 @@ var _helpers = require('./helpers');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Slider = exports.Slider = function () {
+var Slider = function () {
   function Slider(id) {
     var _this = this;
 
@@ -414,7 +408,7 @@ var Slider = exports.Slider = function () {
      * Show or hide slide of given position. Show current slide by default
      * @param  {Int} position = this.position
      * @param  {Bool} state = true
-     * @param  {String} direction = ''
+     * @param  {String} dir = ''
      */
 
   }, {
@@ -422,12 +416,13 @@ var Slider = exports.Slider = function () {
     value: function showSlide() {
       var position = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.position;
       var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-      var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+      var dir = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
       if (position < 1 || position > this.slides.length) {
         return;
       }
 
+      var direction = dir;
       var indirection = '';
 
       switch (this.config.style) {
@@ -462,7 +457,9 @@ var Slider = exports.Slider = function () {
 
   return Slider;
 }();
-},{"./helpers":8}],9:[function(require,module,exports) {
+
+exports.default = Slider;
+},{"./helpers":6}],9:[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -540,13 +537,13 @@ var sliderID = 'mySlider';
 var sliderConfig = {
   controls: {
     // arrows: false, // true by default
-    pagination: 'numbers' // ( 'dots' | 'numbers' | 'none' by default ) 
+    pagination: 'numbers' // ( 'dots' | 'numbers' | 'none' by default )
   },
-  style: 'slide-h' // slide-v | slide-h | fade by default 
+  style: 'slide-h' // slide-v | slide-h | fade by default
 };
 var testSlider = new _rsSlider.Slider(sliderID, sliderConfig);
 // console.info(testSlider.config);
-},{"./rs-slider":3,"./styles/rs-slider.scss":4}],10:[function(require,module,exports) {
+},{"./rs-slider":3,"./styles/rs-slider.scss":4}],18:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -715,5 +712,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},[10,2])
+},{}]},{},[18,2])
 //# sourceMappingURL=/main.be9d8573.map
