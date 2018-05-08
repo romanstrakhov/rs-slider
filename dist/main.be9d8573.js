@@ -77,7 +77,7 @@ parcelRequire = (function (modules, cache, entry) {
 
   // Override the current require with this new one
   return newRequire;
-})({6:[function(require,module,exports) {
+})({8:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -156,12 +156,14 @@ exports.Slider = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _helpers = require('./helpers.js');
+var _helpers = require('./helpers');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Slider = exports.Slider = function () {
   function Slider(id) {
+    var _this = this;
+
     var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
     _classCallCheck(this, Slider);
@@ -186,7 +188,7 @@ var Slider = exports.Slider = function () {
 
     // Add slides from HTML markup
     this.wrapper.querySelectorAll('.rsslider__item').forEach(function (element) {
-      switch (this.config.style) {
+      switch (_this.config.style) {
         case 'slide-h':
           element.classList.add('hidden_right');
           break;
@@ -197,7 +199,7 @@ var Slider = exports.Slider = function () {
         default:
           element.classList.add('hidden');
       }
-      this.slides.push(element);
+      _this.slides.push(element);
     }, this);
 
     if (this.config.controls.arrows === true) this.addArrows();
@@ -210,7 +212,6 @@ var Slider = exports.Slider = function () {
   _createClass(Slider, [{
     key: 'parseConfig',
     value: function parseConfig(config) {
-
       // Defaults
       var defaults = {
         controls: {
@@ -219,7 +220,6 @@ var Slider = exports.Slider = function () {
         },
         style: 'fade'
       };
-
       if (config) {
         this.config = (0, _helpers.uniteObjects)(defaults, config);
       }
@@ -232,37 +232,34 @@ var Slider = exports.Slider = function () {
   }, {
     key: 'addArrows',
     value: function addArrows() {
-      var _this = this;
+      var _this2 = this;
 
       this.arrows = {};
-
-      this.arrows['prev'] = (0, _helpers.addDOMElement)(this.wrapper, 'button', ['rsslider__prev']);
-      this.arrows['next'] = (0, _helpers.addDOMElement)(this.wrapper, 'button', ['rsslider__next']);
+      this.arrows.prev = (0, _helpers.addDOMElement)(this.wrapper, 'button', ['rsslider__prev']);
+      this.arrows.next = (0, _helpers.addDOMElement)(this.wrapper, 'button', ['rsslider__next']);
       this.redrawArrowsOnSides();
-
       // Set event listeners
-      this.arrows['prev'].addEventListener('click', function () {
-        return _this.move(-1);
+      this.arrows.prev.addEventListener('click', function () {
+        return _this2.move(-1);
       });
-      this.arrows['next'].addEventListener('click', function () {
-        return _this.move(1);
+      this.arrows.next.addEventListener('click', function () {
+        return _this2.move(1);
       });
     }
 
     /**
      * Update 'prev'/'next' arrows on sides
-     * @param  {int} toPosition 
+     * @param  {int} toPosition
      * @param  {int} fromPosition optional
      */
 
   }, {
     key: 'redrawArrowsOnSides',
     value: function redrawArrowsOnSides() {
-      var _this2 = this;
+      var _this3 = this;
 
       var toPosition = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.position;
       var fromPosition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.position;
-
 
       // Do nothing with DOM if there is no reason to redraw arrows
       // 'cause their state changes only if toPosition or fromPosition is on side
@@ -277,42 +274,37 @@ var Slider = exports.Slider = function () {
         name: 'next',
         show: toPosition !== this.slides.length
       }];
-
       arrowsStates.forEach(function (arrow) {
-        return _this2.showArrows(arrow.name, arrow.show);
+        return _this3.showArrows(arrow.name, arrow.show);
       });
     }
   }, {
     key: 'addPaginator',
     value: function addPaginator(style) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.paginator = (0, _helpers.addDOMElement)(this.wrapper, 'div', ['rsslider__paginator']);
       this.paginatorElements = [];
-
       var num = 1;
-
       switch (style) {
         case 'numbers':
           this.slides.forEach(function () {
-            return _this3.paginatorElements.push((0, _helpers.addDOMElement)(_this3.paginator, 'button', ['rsslider__paginator_numbered__button'], {}, num++));
+            _this4.paginatorElements.push((0, _helpers.addDOMElement)(_this4.paginator, 'button', ['rsslider__paginator_numbered__button'], {}, num));
+            num += 1;
           });
           break;
         default:
           // dots
           this.slides.forEach(function () {
-            return _this3.paginatorElements.push((0, _helpers.addDOMElement)(_this3.paginator, 'button', ['rsslider__paginator__button']));
+            return _this4.paginatorElements.push((0, _helpers.addDOMElement)(_this4.paginator, 'button', ['rsslider__paginator__button']));
           });
       }
-
       // Set event listeners to each paginator element
-
       this.paginatorElements.forEach(function (element, index) {
         element.addEventListener('click', function () {
-          return _this3.jump(index + 1);
+          return _this4.jump(index + 1);
         });
       });
-
       this.updatePaginator();
     }
 
@@ -328,20 +320,17 @@ var Slider = exports.Slider = function () {
       var toPosition = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.position;
       var fromPosition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.position;
 
-
       this.paginatorElements[fromPosition - 1].classList.remove('active');
       this.paginatorElements[toPosition - 1].classList.add('active');
     }
   }, {
     key: 'move',
     value: function move(delta) {
-
       this.setPosition(this.position + delta);
     }
   }, {
     key: 'jump',
     value: function jump(position) {
-
       this.setPosition(position);
     }
 
@@ -353,11 +342,10 @@ var Slider = exports.Slider = function () {
   }, {
     key: 'setPosition',
     value: function setPosition(position) {
-
       if (position < 1 || position > this.slides.length) {
-        return false; // error, no action
+        return; // error, no action
       } else if (position === this.position) {
-        return false; // TODO: Decide should we handle this excusively
+        return; // TODO: Decide should we handle this excusively
       }
 
       var oldPosition = this.position;
@@ -368,35 +356,33 @@ var Slider = exports.Slider = function () {
 
       switch (this.config.style) {
         case 'slide-h':
-          if (position != oldPosition) {
+          if (position !== oldPosition) {
             step = position > oldPosition ? 1 : -1;
             direction = position > oldPosition ? 'left' : 'right';
           }
           this.showSlide(oldPosition, false, direction);
           if (Math.abs(position - oldPosition) > 1) {
-            for (var i = oldPosition + step; i != position; i += step) {
+            for (var i = oldPosition + step; i !== position; i += step) {
               this.showSlide(i, true, direction);
               this.showSlide(i, false, direction);
             }
           }
           this.showSlide(position, true, direction);
           break;
-
         case 'slide-v':
-          if (position != oldPosition) {
+          if (position !== oldPosition) {
             step = position > oldPosition ? 1 : -1;
             direction = position > oldPosition ? 'up' : 'down';
           }
           this.showSlide(oldPosition, false, direction);
           if (Math.abs(position - oldPosition) > 1) {
-            for (var _i = oldPosition + step; _i != position; _i += step) {
+            for (var _i = oldPosition + step; _i !== position; _i += step) {
               this.showSlide(_i, true, direction);
               this.showSlide(_i, false, direction);
             }
           }
           this.showSlide(position, true, direction);
           break;
-
         case 'fade':
         default:
           this.showSlide(oldPosition, false);
@@ -411,13 +397,12 @@ var Slider = exports.Slider = function () {
     /**
      * Show or hide 'prev'/'next' arrow
      * @param   {String} button 'prev' or 'next'
-     * @returns {Boolean} show 
+     * @returns {Boolean} show
      */
 
   }, {
     key: 'showArrows',
     value: function showArrows(button, show) {
-
       if (show) {
         this.arrows[button].classList.remove('hidden');
       } else {
@@ -427,9 +412,9 @@ var Slider = exports.Slider = function () {
 
     /**
      * Show or hide slide of given position. Show current slide by default
-     * @param  {Int} position=this.position
-     * @param  {Bool} state=true
-     * @param  {String} direction=''
+     * @param  {Int} position = this.position
+     * @param  {Bool} state = true
+     * @param  {String} direction = ''
      */
 
   }, {
@@ -439,17 +424,16 @@ var Slider = exports.Slider = function () {
       var state = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
 
-
       if (position < 1 || position > this.slides.length) {
-        return false;
+        return;
       }
 
       var indirection = '';
 
       switch (this.config.style) {
         case 'slide-h':
-          direction = direction == 'right' ? 'right' : 'left'; // set left by default
-          indirection = direction == 'left' ? 'right' : 'left';
+          direction = direction === 'right' ? 'right' : 'left'; // set left by default
+          indirection = direction === 'left' ? 'right' : 'left';
           if (state) {
             this.slides[position - 1].classList.remove('hidden_' + indirection);
           } else {
@@ -457,8 +441,8 @@ var Slider = exports.Slider = function () {
           }
           break;
         case 'slide-v':
-          direction = direction == 'down' ? 'down' : 'up'; // set up by default
-          indirection = direction == 'up' ? 'down' : 'up';
+          direction = direction === 'down' ? 'down' : 'up'; // set up by default
+          indirection = direction === 'up' ? 'down' : 'up';
           if (state) {
             this.slides[position - 1].classList.remove('hidden_' + indirection);
           } else {
@@ -478,7 +462,7 @@ var Slider = exports.Slider = function () {
 
   return Slider;
 }();
-},{"./helpers.js":6}],9:[function(require,module,exports) {
+},{"./helpers":8}],9:[function(require,module,exports) {
 var bundleURL = null;
 function getBundleURLCached() {
   if (!bundleURL) {
@@ -545,7 +529,7 @@ module.exports = reloadCSS;
         module.hot.dispose(reloadCSS);
         module.hot.accept(reloadCSS);
       
-},{"./../img/prev.png":[["prev.343a05d8.png",7],7],"./../img/next.png":[["next.9e3d13ce.png",8],8],"_css_loader":5}],2:[function(require,module,exports) {
+},{"./../img/prev.png":[["prev.343a05d8.png",6],6],"./../img/next.png":[["next.9e3d13ce.png",7],7],"_css_loader":5}],2:[function(require,module,exports) {
 'use strict';
 
 var _rsSlider = require('./rs-slider');
@@ -562,7 +546,7 @@ var sliderConfig = {
 };
 var testSlider = new _rsSlider.Slider(sliderID, sliderConfig);
 // console.info(testSlider.config);
-},{"./rs-slider":3,"./styles/rs-slider.scss":4}],13:[function(require,module,exports) {
+},{"./rs-slider":3,"./styles/rs-slider.scss":4}],10:[function(require,module,exports) {
 
 var OVERLAY_ID = '__parcel__error__overlay__';
 
@@ -592,7 +576,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = '' || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + '52059' + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + '53996' + '/');
   ws.onmessage = function (event) {
     var data = JSON.parse(event.data);
 
@@ -731,5 +715,5 @@ function hmrAccept(bundle, id) {
     return hmrAccept(global.parcelRequire, id);
   });
 }
-},{}]},{},[13,2])
+},{}]},{},[10,2])
 //# sourceMappingURL=/main.be9d8573.map
