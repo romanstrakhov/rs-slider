@@ -69,7 +69,7 @@ export class Slider {
 
     this.arrows['prev'] = addDOMElement(this.wrapper, 'button', ['rsslider__prev']);
     this.arrows['next'] = addDOMElement(this.wrapper, 'button', ['rsslider__next']);
-    this.updateArrows();
+    this.redrawArrowsOnSides();
 
     // Set event listeners
     this.arrows['prev'].addEventListener( 'click', () => this.move(-1) );
@@ -82,25 +82,27 @@ export class Slider {
    * @param  {int} toPosition 
    * @param  {int} fromPosition optional
    */
-  updateArrows(toPosition=this.position, fromPosition=this.position) {
+  redrawArrowsOnSides(toPosition=this.position, fromPosition=this.position) {
 
-    switch (fromPosition) {
-    case 1:
-      this.showArrows('prev', true);
-      break;
-    case this.slides.length:
-      this.showArrows('next', true);
-      break;
-    }
+    // Do nothing with DOM if there is no reason to redraw arrows
+    // 'cause their state changes only if toPosition or fromPosition is on side
+    // TODO: Make a little test & benchmark it
+    if ( Math.min(fromPosition, toPosition) > 1 && 
+      Math.max(fromPosition, toPosition) < this.slides.length ) return;
 
-    switch (toPosition) {
-    case 1:
-      this.showArrows('prev', false);
-      break;
-    case this.slides.length:
-      this.showArrows('next', false);
-      break;
-    }
+    // Define conditions to show arrows
+    let arrowsStates = [
+      {
+        name: 'prev',
+        show: toPosition !== 1
+      },
+      {
+        name: 'next',
+        show: toPosition !== this.slides.length
+      }
+    ];
+
+    arrowsStates.forEach ( arrow => this.showArrows(arrow.name, arrow.show) );
 
   }
 
@@ -213,7 +215,7 @@ export class Slider {
     } // switch style
   
     // Update controls
-    if (this.config.controls.arrows) this.updateArrows(position, oldPosition);
+    if (this.config.controls.arrows) this.redrawArrowsOnSides(position, oldPosition);
     if (this.config.controls.pagination && this.config.controls.pagination!=='none') this.updatePaginator(position, oldPosition);
     
   }
@@ -252,7 +254,6 @@ export class Slider {
       direction = (direction=='right')?'right':'left'; // set left by default
       indirection = (direction=='left')?'right':'left';
       if (state) {
-        // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
         this.slides[position-1].classList.remove(`hidden_${indirection}`);
       } else {
         this.slides[position-1].classList.add(`hidden_${direction}`);
@@ -262,8 +263,6 @@ export class Slider {
       direction = (direction=='down')?'down':'up';  // set up by default
       indirection = (direction=='up')?'down':'up';
       if (state) {
-        // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
-        console.log (`remove hidden_${indirection} for ${position}`);
         this.slides[position-1].classList.remove(`hidden_${indirection}`);
       } else {
         this.slides[position-1].classList.add(`hidden_${direction}`);

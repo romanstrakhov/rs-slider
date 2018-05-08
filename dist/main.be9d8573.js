@@ -238,7 +238,7 @@ var Slider = exports.Slider = function () {
 
       this.arrows['prev'] = (0, _helpers.addDOMElement)(this.wrapper, 'button', ['rsslider__prev']);
       this.arrows['next'] = (0, _helpers.addDOMElement)(this.wrapper, 'button', ['rsslider__next']);
-      this.updateArrows();
+      this.redrawArrowsOnSides();
 
       // Set event listeners
       this.arrows['prev'].addEventListener('click', function () {
@@ -256,34 +256,36 @@ var Slider = exports.Slider = function () {
      */
 
   }, {
-    key: 'updateArrows',
-    value: function updateArrows() {
+    key: 'redrawArrowsOnSides',
+    value: function redrawArrowsOnSides() {
+      var _this2 = this;
+
       var toPosition = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.position;
       var fromPosition = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.position;
 
 
-      switch (fromPosition) {
-        case 1:
-          this.showArrows('prev', true);
-          break;
-        case this.slides.length:
-          this.showArrows('next', true);
-          break;
-      }
+      // Do nothing with DOM if there is no reason to redraw arrows
+      // 'cause their state changes only if toPosition or fromPosition is on side
+      // TODO: Make a little test & benchmark it
+      if (Math.min(fromPosition, toPosition) > 1 && Math.max(fromPosition, toPosition) < this.slides.length) return;
 
-      switch (toPosition) {
-        case 1:
-          this.showArrows('prev', false);
-          break;
-        case this.slides.length:
-          this.showArrows('next', false);
-          break;
-      }
+      // Define conditions to show arrows
+      var arrowsStates = [{
+        name: 'prev',
+        show: toPosition !== 1
+      }, {
+        name: 'next',
+        show: toPosition !== this.slides.length
+      }];
+
+      arrowsStates.forEach(function (arrow) {
+        return _this2.showArrows(arrow.name, arrow.show);
+      });
     }
   }, {
     key: 'addPaginator',
     value: function addPaginator(style) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.paginator = (0, _helpers.addDOMElement)(this.wrapper, 'div', ['rsslider__paginator']);
       this.paginatorElements = [];
@@ -293,13 +295,13 @@ var Slider = exports.Slider = function () {
       switch (style) {
         case 'numbers':
           this.slides.forEach(function () {
-            return _this2.paginatorElements.push((0, _helpers.addDOMElement)(_this2.paginator, 'button', ['rsslider__paginator_numbered__button'], {}, num++));
+            return _this3.paginatorElements.push((0, _helpers.addDOMElement)(_this3.paginator, 'button', ['rsslider__paginator_numbered__button'], {}, num++));
           });
           break;
         default:
           // dots
           this.slides.forEach(function () {
-            return _this2.paginatorElements.push((0, _helpers.addDOMElement)(_this2.paginator, 'button', ['rsslider__paginator__button']));
+            return _this3.paginatorElements.push((0, _helpers.addDOMElement)(_this3.paginator, 'button', ['rsslider__paginator__button']));
           });
       }
 
@@ -307,7 +309,7 @@ var Slider = exports.Slider = function () {
 
       this.paginatorElements.forEach(function (element, index) {
         element.addEventListener('click', function () {
-          return _this2.jump(index + 1);
+          return _this3.jump(index + 1);
         });
       });
 
@@ -402,7 +404,7 @@ var Slider = exports.Slider = function () {
       } // switch style
 
       // Update controls
-      if (this.config.controls.arrows) this.updateArrows(position, oldPosition);
+      if (this.config.controls.arrows) this.redrawArrowsOnSides(position, oldPosition);
       if (this.config.controls.pagination && this.config.controls.pagination !== 'none') this.updatePaginator(position, oldPosition);
     }
 
@@ -449,7 +451,6 @@ var Slider = exports.Slider = function () {
           direction = direction == 'right' ? 'right' : 'left'; // set left by default
           indirection = direction == 'left' ? 'right' : 'left';
           if (state) {
-            // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
             this.slides[position - 1].classList.remove('hidden_' + indirection);
           } else {
             this.slides[position - 1].classList.add('hidden_' + direction);
@@ -459,8 +460,6 @@ var Slider = exports.Slider = function () {
           direction = direction == 'down' ? 'down' : 'up'; // set up by default
           indirection = direction == 'up' ? 'down' : 'up';
           if (state) {
-            // this.slides[position-1].classList.remove(`hidden_${direction}`); // temp
-            console.log('remove hidden_' + indirection + ' for ' + position);
             this.slides[position - 1].classList.remove('hidden_' + indirection);
           } else {
             this.slides[position - 1].classList.add('hidden_' + direction);
