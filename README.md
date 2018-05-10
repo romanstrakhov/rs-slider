@@ -15,4 +15,4 @@ The code is written for educational purposes.
 - run `yarn dev` for start
 
 ## Demo
-[Demo](https://romanstrakhov.github.com/rs-slider/dist/)
+[Demo](https://romanstrakhov.github.com/rs-slider/demo/)
