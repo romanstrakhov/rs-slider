@@ -1,4 +1,4 @@
-import { Slider } from './rs-slider';
+import Slider from './rs-slider';
 import './styles/rs-slider.scss';
 
 const sliderID = 'mySlider';
